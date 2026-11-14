@@ -1,0 +1,2660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="AI 情报报纸 · 自动汇聚海内外 AI 新闻、GitHub 开源项目、arXiv 论文与模型趋势，自动生成日报 / 周报 / 月报">
+<title>AI 情报 · 日报 / 周报 / 月报</title>
+<style>
+:root{
+  --paper:#f5f0e4;
+  --paper-2:#efe8d8;
+  --ink:#191713;
+  --ink-2:#3d3830;
+  --muted:#7a7264;
+  --rule:#cdc4b1;
+  --rule-strong:#8f8574;
+  --red:#a52a1e;
+  --serif:"Songti SC","STSong","SimSun","Noto Serif SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+  --sans:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+  --mono:"Cascadia Mono",Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  line-height:1.62;
+  background-image:
+    radial-gradient(circle at 18% 8%, rgba(255,255,255,.5), transparent 55%),
+    radial-gradient(circle at 82% 92%, rgba(190,175,145,.16), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.012) 0 1px, transparent 1px 3px);
+}
+.wrap{max-width:1280px;margin:0 auto;padding:0 26px 56px}
+a{color:inherit}
+::selection{background:rgba(165,42,30,.18)}
+
+/* ---------- 报头 ---------- */
+.masthead{position:relative;padding-top:12px}
+.mast-top{
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  font-family:var(--sans);font-size:11.5px;letter-spacing:.14em;color:var(--muted);
+  padding:10px 0;border-bottom:1px solid var(--rule);
+}
+.mast-main{
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;
+  padding:16px 0 6px;
+}
+.mast-side{font-family:var(--sans);font-size:11.5px;color:var(--muted);line-height:1.95;letter-spacing:.06em}
+.mast-side.right{text-align:right}
+.mast-title{
+  margin:0;text-align:center;font-weight:900;line-height:1;
+  font-size:clamp(46px,8.2vw,86px);
+  letter-spacing:.16em;text-indent:.16em;
+  font-family:var(--serif);
+}
+.mast-title span{color:var(--red)}
+.mast-sub{
+  text-align:center;font-family:var(--sans);font-size:10.5px;letter-spacing:.3em;
+  color:var(--muted);padding:6px 0 10px;border-bottom:3px double var(--ink);
+}
+.seal{
+  position:absolute;right:2px;top:44px;width:78px;height:78px;
+  border:2.5px solid var(--red);border-radius:7px;color:var(--red);
+  display:grid;place-items:center;font-size:17px;font-weight:700;letter-spacing:.18em;
+  writing-mode:vertical-rl;text-orientation:upright;transform:rotate(-7deg);opacity:.82;
+  pointer-events:none;user-select:none;padding:6px;
+  box-shadow:inset 0 0 0 1px rgba(165,42,30,.18);
+}
+
+/* ---------- 导航 ---------- */
+.tabs{display:flex;justify-content:center;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.tab{
+  font-family:var(--sans);font-size:14.5px;letter-spacing:.2em;padding:13px 30px;
+  background:none;border:none;cursor:pointer;color:var(--ink-2);position:relative;
+  transition:color .15s;
+}
+.tab:hover{color:var(--red)}
+.tab.active{color:var(--red);font-weight:700}
+.tab.active::after{content:"";position:absolute;left:22%;right:22%;bottom:-1px;height:2px;background:var(--red)}
+.tab .badge{font-size:10px;letter-spacing:0;color:var(--muted);margin-left:6px;font-weight:400}
+
+/* ---------- 快讯条 ---------- */
+.ticker{
+  display:flex;align-items:center;gap:14px;overflow:hidden;
+  border-bottom:1px solid var(--rule);padding:9px 0;font-size:13px;
+}
+.ticker-label{
+  color:var(--red);font-family:var(--sans);font-size:11.5px;letter-spacing:.18em;
+  white-space:nowrap;flex:none;border:1px solid var(--red);padding:1px 7px;
+}
+.ticker-view{overflow:hidden;flex:1;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent)}
+.ticker-track{display:inline-flex;gap:44px;white-space:nowrap;animation:marq 90s linear infinite;will-change:transform}
+.ticker-view:hover .ticker-track{animation-play-state:paused}
+.ticker-track a{text-decoration:none;color:var(--ink-2);font-size:13px}
+.ticker-track a:hover{color:var(--red);text-decoration:underline}
+.ticker-track b{color:var(--red);font-weight:400;font-family:var(--sans);font-size:11px;margin-left:6px}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---------- 工具条 ---------- */
+.toolbar{
+  position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:9px;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--rule);
+  background:linear-gradient(var(--paper) 72%, rgba(245,240,228,.86));
+  backdrop-filter:blur(3px);
+}
+.btn{
+  font-family:var(--sans);font-size:12.5px;letter-spacing:.06em;cursor:pointer;
+  border:1px solid var(--rule-strong);background:transparent;color:var(--ink);
+  padding:6px 13px;border-radius:2px;transition:all .15s;
+}
+.btn:hover{border-color:var(--ink);background:rgba(0,0,0,.03)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.primary:hover{background:var(--red);border-color:var(--red)}
+.btn[disabled]{opacity:.5;cursor:default}
+.switch{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:12px;color:var(--ink-2);cursor:pointer;user-select:none}
+.switch input{accent-color:var(--red);width:14px;height:14px}
+input.search{
+  flex:1 1 220px;min-width:170px;font-family:var(--sans);font-size:12.5px;
+  padding:6px 10px;border:1px solid var(--rule-strong);background:rgba(255,255,255,.45);
+  color:var(--ink);border-radius:2px;outline:none;
+}
+input.search:focus{border-color:var(--ink);background:#fff}
+select{
+  font-family:var(--sans);font-size:12.5px;padding:6px 8px;border:1px solid var(--rule-strong);
+  background:rgba(255,255,255,.45);color:var(--ink);border-radius:2px;outline:none;
+}
+.refresh-status{margin-left:auto;font-family:var(--sans);font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+.refresh-status.busy{color:var(--red)}
+.refresh-status.busy::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:6px;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+
+.proxy-flag{
+  font-family:var(--sans);font-size:10.5px;letter-spacing:.04em;border:1px solid var(--rule);
+  padding:2px 8px;border-radius:10px;color:var(--muted);cursor:default;white-space:nowrap;
+}
+.proxy-flag.ok{border-color:rgba(90,120,70,.5);color:#4a6b3a;background:rgba(90,120,70,.07)}
+.proxy-flag.off{border-color:rgba(165,42,30,.35);color:var(--red);background:rgba(165,42,30,.05)}
+
+/* ---------- 头版 ---------- */
+.paper{min-height:50vh}
+.front{
+  display:grid;grid-template-columns:minmax(0,2.15fr) minmax(0,1fr);
+  border-bottom:1px solid var(--rule);
+}
+.lead-main{padding:24px 28px 26px 0;border-right:1px solid var(--rule);min-width:0}
+.kicker{
+  font-family:var(--sans);font-size:11.5px;letter-spacing:.2em;color:var(--red);
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
+.kicker .dot{width:6px;height:6px;background:var(--red);border-radius:50%}
+.lead-title{
+  font-size:clamp(27px,3.1vw,41px);line-height:1.3;font-weight:800;margin:12px 0 14px;letter-spacing:.01em;
+}
+.lead-title a{text-decoration:none}
+.lead-title a:hover{color:var(--red)}
+.lead-sum{
+  font-size:15px;color:var(--ink-2);border-left:3px solid var(--red);
+  padding:2px 0 2px 14px;margin:0 0 14px;
+}
+.lead-meta{font-family:var(--sans);font-size:11.5px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;letter-spacing:.03em}
+.lead-meta .src{color:var(--red)}
+.lead-side{padding:24px 0 26px 26px;min-width:0}
+.side-head{
+  font-family:var(--sans);font-size:12px;letter-spacing:.24em;color:var(--muted);
+  border-bottom:1px solid var(--ink);padding-bottom:5px;margin-bottom:4px;display:flex;justify-content:space-between;
+}
+.rank{list-style:none;margin:0;padding:0;counter-reset:rk}
+.rank li{
+  counter-increment:rk;display:flex;gap:10px;padding:9px 0;border-bottom:1px dotted var(--rule);font-size:14px;line-height:1.45;
+}
+.rank li::before{
+  content:counter(rk);font-family:Georgia,serif;font-size:15px;color:var(--red);
+  min-width:18px;font-weight:700;line-height:1.35;
+}
+.rank a{text-decoration:none}
+.rank a:hover{color:var(--red);text-decoration:underline}
+.rank .rmeta{display:block;font-family:var(--sans);font-size:10.5px;color:var(--muted);margin-top:2px}
+
+.stat-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-top:18px;
+}
+.stat{background:var(--paper);padding:10px 12px}
+.stat b{display:block;font-family:Georgia,serif;font-size:23px;line-height:1.25;letter-spacing:.01em}
+.stat span{font-family:var(--sans);font-size:10.5px;color:var(--muted);letter-spacing:.08em}
+.stat i{font-style:normal;font-size:13px;color:var(--muted)}
+
+/* ---------- 分栏 ---------- */
+.sections{column-count:3;column-gap:34px;padding-top:26px}
+.sec{break-inside:avoid;margin-bottom:30px}
+.sec-head{
+  display:flex;align-items:baseline;gap:9px;border-bottom:2px solid var(--ink);
+  padding-bottom:4px;margin-bottom:6px;
+}
+.sec-head h3{font-size:19px;margin:0;letter-spacing:.1em;font-weight:800}
+.sec-head .en{font-family:var(--sans);font-size:9.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+.sec-head .cnt{margin-left:auto;font-family:var(--sans);font-size:10.5px;color:var(--muted)}
+.item{padding:9px 0;border-bottom:1px dotted var(--rule)}
+.item:last-child{border-bottom:none}
+.item h4{margin:0;font-size:14.8px;line-height:1.46;font-weight:700;letter-spacing:.005em}
+.item h4 a{text-decoration:none}
+.item h4 a:hover{color:var(--red);text-decoration:underline}
+.item .meta{font-family:var(--sans);font-size:10.5px;color:var(--muted);margin-top:3px;display:flex;gap:9px;flex-wrap:wrap;letter-spacing:.02em}
+.item .meta .src{color:var(--ink-2)}
+.item .meta .hot{color:var(--red)}
+.item .sum{
+  margin:5px 0 0;font-size:12.5px;color:var(--ink-2);opacity:.92;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+/* ---------- 周报 / 月报 ---------- */
+.week-top{padding:26px 0 6px;border-bottom:1px solid var(--rule)}
+.week-head{
+  display:flex;align-items:baseline;gap:12px;border-bottom:3px double var(--ink);padding-bottom:6px;margin-bottom:14px;
+}
+.week-head h2{margin:0;font-size:26px;letter-spacing:.12em}
+.week-head .en{font-family:var(--sans);font-size:10px;letter-spacing:.2em;color:var(--muted)}
+.top-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 40px;padding-bottom:8px}
+.top-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px dotted var(--rule);min-width:0}
+.top-item .no{
+  font-family:Georgia,serif;font-size:30px;line-height:1;color:var(--red);
+  opacity:.55;font-weight:700;min-width:36px;
+}
+.top-item h4{margin:0;font-size:16px;line-height:1.45}
+.top-item h4 a{text-decoration:none}
+.top-item h4 a:hover{color:var(--red);text-decoration:underline}
+.top-item .meta{font-family:var(--sans);font-size:10.5px;color:var(--muted);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.top-item .sum{font-size:12.5px;color:var(--ink-2);margin:4px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+.charts{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:24px 0 0}
+.panel{background:var(--paper);padding:16px 18px;min-width:0}
+.panel h3{margin:0 0 12px;font-size:14.5px;letter-spacing:.12em;font-weight:800;display:flex;justify-content:space-between;align-items:baseline}
+.panel h3 small{font-family:var(--sans);font-size:10px;color:var(--muted);letter-spacing:.04em;font-weight:400}
+.bars{display:flex;align-items:flex-end;gap:4px;height:96px}
+.bar{flex:1;position:relative;background:var(--rule);min-width:4px;height:100%;display:flex;align-items:flex-end}
+.bar i{display:block;width:100%;background:linear-gradient(180deg,var(--red),#7d1f16);opacity:.82}
+.bar.b0 i{background:var(--rule)}
+.bar-labels{display:flex;gap:4px;font-family:var(--sans);font-size:9px;color:var(--muted);margin-top:4px}
+.bar-labels span{flex:1;text-align:center;white-space:nowrap;overflow:hidden}
+.hbar{display:grid;grid-template-columns:64px 1fr 32px;gap:8px;align-items:center;font-family:var(--sans);font-size:11px;margin-bottom:7px}
+.hbar .lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-2)}
+.hbar .tr{height:8px;background:rgba(0,0,0,.06)}
+.hbar .tr i{display:block;height:100%;background:var(--red);opacity:.72}
+.hbar .vl{text-align:right;color:var(--muted);font-size:10px}
+
+/* 关键词 */
+.cloud{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;line-height:1.15;padding:4px 0}
+.cloud span{color:var(--ink);opacity:.72;white-space:nowrap}
+.cloud span:nth-child(3n){color:var(--red);opacity:.8}
+
+/* 大事记 */
+.timeline{column-count:2;column-gap:36px;margin-top:6px}
+.tl-item{break-inside:avoid;display:flex;gap:12px;padding:10px 0;border-bottom:1px dotted var(--rule)}
+.tl-item time{font-family:var(--sans);font-size:10.5px;color:var(--red);min-width:42px;letter-spacing:.04em;padding-top:2px}
+.tl-item .tx{font-size:14px;line-height:1.5}
+.tl-item a{text-decoration:none}
+.tl-item a:hover{color:var(--red);text-decoration:underline}
+.tl-item .src{display:block;font-family:var(--sans);font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ---------- 采集状态 ---------- */
+.status-bar{
+  margin-top:30px;border-top:3px double var(--ink);padding:14px 0 0;
+  font-family:var(--sans);font-size:11px;color:var(--muted);
+}
+.status-bar .st-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.status-bar .st-head b{font-size:11.5px;letter-spacing:.16em;color:var(--ink)}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 10px}
+.chip{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border:1px solid var(--rule);padding:3px 9px;border-radius:2px;
+  font-size:10.5px;color:var(--ink-2);background:rgba(255,255,255,.38);
+}
+.chip.ok{border-color:rgba(120,140,100,.45)}
+.chip.fail{border-color:rgba(165,42,30,.4);color:var(--red);background:rgba(165,42,30,.05)}
+.chip b{font-weight:400;color:var(--muted);margin-left:auto}
+.chip.fail b{color:var(--red)}
+
+/* ---------- 数据源页 ---------- */
+.sources-page{padding-top:24px}
+.panel-block{border:1px solid var(--rule);background:rgba(255,255,255,.28);padding:20px 22px;margin-bottom:20px}
+.panel-block h2{margin:0 0 12px;font-size:19px;letter-spacing:.1em;border-bottom:1px solid var(--rule);padding-bottom:6px}
+.panel-block p{margin:8px 0;font-size:13.5px;color:var(--ink-2)}
+.panel-block ul{margin:8px 0;padding-left:20px;font-size:13.5px;color:var(--ink-2)}
+.panel-block li{margin:4px 0}
+.panel-block code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:2px}
+.src-table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:12px}
+.src-table th,.src-table td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule)}
+.src-table th{color:var(--muted);font-weight:400;letter-spacing:.08em;font-size:10.5px;text-transform:uppercase}
+.src-table td.ok{color:#4a6b3a}
+.src-table td.fail{color:var(--red)}
+.settings-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.settings-row label{font-family:var(--sans);font-size:12px;color:var(--ink-2);display:flex;gap:8px;align-items:center}
+.settings-row input[type=text]{
+  width:290px;font-family:var(--mono);font-size:11.5px;padding:6px 8px;
+  border:1px solid var(--rule-strong);background:rgba(255,255,255,.55);outline:none;
+}
+.hint{font-family:var(--sans);font-size:11.5px;color:var(--muted);line-height:1.8}
+.hint b{color:var(--ink-2);font-weight:600}
+
+/* ---------- 状态：加载 / 空 / 错误 ---------- */
+.loading-pane{padding:30px 0}
+.load-title{font-size:22px;letter-spacing:.14em;font-weight:800}
+.load-sub{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:6px}
+.src-chips{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 6px;min-height:24px}
+.skeleton{display:grid;grid-template-columns:2.15fr 1fr;gap:34px;margin-top:26px}
+.sk-col{border-right:1px solid var(--rule);padding-right:34px}
+.sk-line{height:13px;background:linear-gradient(90deg,#e6ddca 25%,#f3edde 50%,#e6ddca 75%);background-size:200% 100%;animation:shimmer 1.5s infinite linear;margin-bottom:11px;border-radius:2px}
+.sk-line.lg{height:30px}
+.sk-line.md{height:19px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.empty{border:1px solid var(--rule);padding:34px;text-align:center;margin:30px 0}
+.empty h3{margin:0 0 8px;font-size:20px;letter-spacing:.1em}
+.empty p{font-family:var(--sans);font-size:12.5px;color:var(--muted);margin:6px 0}
+.notice{
+  border:1px solid rgba(165,42,30,.35);background:rgba(165,42,30,.045);
+  padding:12px 16px;font-family:var(--sans);font-size:12px;color:var(--ink-2);margin:14px 0;
+}
+.notice b{color:var(--red)}
+
+footer{
+  margin-top:30px;border-top:3px double var(--ink);padding-top:16px;
+  font-family:var(--sans);font-size:10.5px;color:var(--muted);line-height:1.9;
+  display:grid;gap:3px;justify-items:center;text-align:center;
+}
+footer .foot-brand{font-family:var(--serif);font-size:14px;letter-spacing:.32em;color:var(--ink-2);text-indent:.32em}
+footer .foot-note{max-width:760px;margin:0}
+footer #foot-meta{font-variant-numeric:tabular-nums;letter-spacing:.06em}
+
+/* ---------- 结尾 ---------- */
+.end-mark{
+  display:flex;align-items:center;gap:18px;margin:34px 0 0;
+  font-family:var(--sans);font-size:10.5px;letter-spacing:.4em;color:var(--muted);
+  text-indent:.4em;white-space:nowrap;
+}
+.end-mark::before,.end-mark::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+/* ---------- 模型排行榜 ---------- */
+.model-board{margin-top:26px;border:1px solid var(--rule);background:rgba(255,255,255,.3)}
+.board-head{
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  padding:12px 16px 8px;border-bottom:2px solid var(--ink);
+}
+.board-head h3{margin:0;font-size:18px;letter-spacing:.12em;font-weight:800}
+.board-head .en{font-family:var(--sans);font-size:9.5px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.board-head .note{margin-left:auto;font-family:var(--sans);font-size:10.5px;color:var(--muted)}
+.m-table{padding:4px 16px 12px}
+.m-head,.m-row{
+  display:grid;grid-template-columns:34px minmax(0,1fr) 110px 62px 62px;
+  gap:12px;align-items:center;padding:7px 0;border-bottom:1px dotted var(--rule);
+}
+.m-head{font-family:var(--sans);font-size:9.5px;letter-spacing:.14em;color:var(--muted);border-bottom:1px solid var(--rule)}
+.m-head span:last-child,.m-head span:nth-last-child(2){text-align:right}
+.m-row:last-child{border-bottom:none}
+.m-no{font-family:Georgia,serif;font-size:15px;color:var(--red);opacity:.62;font-variant-numeric:tabular-nums}
+.m-row:nth-child(2) .m-no{opacity:1;font-weight:700}
+.m-name{min-width:0}
+.m-name a{display:block;font-size:13.5px;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-name a:hover{color:var(--red);text-decoration:underline}
+.m-task{display:block;font-family:var(--sans);font-size:9.5px;color:var(--muted);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-bar{height:6px;background:rgba(0,0,0,.06)}
+.m-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--red),rgba(165,42,30,.4))}
+.m-val,.m-dl{font-family:var(--sans);font-size:10.5px;text-align:right;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.m-dl{color:var(--muted)}
+
+/* ---------- 模型排行榜独立页 ---------- */
+.models-page{padding-top:10px}
+.models-page .page-head{
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  border-bottom:3px double var(--ink);padding-bottom:10px;
+}
+.models-page .page-head h2{margin:0;font-size:27px;letter-spacing:.12em}
+.models-page .page-head .sub{font-family:var(--sans);font-size:11px;letter-spacing:.18em;color:var(--muted)}
+.models-page .intro{font-family:var(--sans);font-size:12.5px;color:var(--muted);line-height:1.9;margin:12px 0 0;max-width:900px}
+.board-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.board-stats .bs{border:1px solid var(--rule);background:rgba(255,255,255,.32);padding:9px 12px 8px;min-width:0}
+.board-stats .bs b{display:block;font-family:var(--serif);font-size:20px;line-height:1.3;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board-stats .bs span{display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;color:var(--muted);margin-top:2px}
+.models-page .model-board{margin-top:18px}
+
+/* ---------- AI 竞技场 Elo 榜 ---------- */
+.arena-bar{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0}
+.ar-chip{
+  font-family:var(--sans);font-size:11.5px;letter-spacing:.04em;color:var(--ink-2);
+  border:1px solid var(--rule);background:rgba(255,255,255,.35);padding:5px 12px;
+  cursor:pointer;border-radius:2px;transition:background .15s,color .15s,border-color .15s;
+}
+.ar-chip:hover{border-color:rgba(165,42,30,.45);color:var(--red)}
+.ar-chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.ar-meta{font-family:var(--sans);font-size:10.5px;color:var(--muted);letter-spacing:.04em;margin:10px 0 0}
+.ar-meta a{color:var(--ink-2)}
+.arena-empty{
+  border:1px dashed var(--rule-strong);background:rgba(255,255,255,.24);
+  padding:26px 18px;text-align:center;font-family:var(--sans);font-size:12.5px;color:var(--muted);margin-top:18px;
+}
+.arena-charts{display:grid;grid-template-columns:1.35fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:18px}
+.arena-charts .panel{background:var(--paper);padding:16px 18px}
+.elo-row{display:grid;grid-template-columns:20px minmax(0,1fr) 170px 46px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px dotted var(--rule);font-family:var(--sans)}
+.elo-row:last-child{border-bottom:none}
+.elo-no{font-family:Georgia,serif;font-size:11.5px;color:var(--muted);text-align:right}
+.elo-name{font-size:12px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.elo-track{height:7px;background:rgba(0,0,0,.06)}
+.elo-track i{display:block;height:100%;background:linear-gradient(90deg,rgba(165,42,30,.42),var(--red))}
+.elo-val{font-size:11px;text-align:right;color:var(--ink-2);font-variant-numeric:tabular-nums}
+
+/* 厂商图标 */
+.vlogo{position:relative;display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;flex:0 0 auto}
+.vlogo .ph{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:Georgia,serif;font-size:9.5px;line-height:1;color:var(--muted);
+  border:1px solid var(--rule);border-radius:2px;text-transform:uppercase;
+}
+.vlogo img{position:relative;width:100%;height:100%;object-fit:contain;display:block}
+.vbar{grid-template-columns:104px 1fr 32px}
+.vbar .lb{display:flex;align-items:center;gap:5px;overflow:hidden}
+.vbar .lb .vn{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ar-table-head{display:flex;align-items:baseline;justify-content:space-between;margin-top:22px;border-bottom:2px solid var(--ink);padding-bottom:6px}
+.ar-table-head h3{margin:0;font-size:17px;letter-spacing:.1em}
+.ar-table-head span{font-family:var(--sans);font-size:10.5px;color:var(--muted)}
+.ar-table-wrap{margin-top:8px;border:1px solid var(--rule);background:rgba(255,255,255,.22);max-height:920px;overflow:auto}
+table.ar-table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:12px}
+.ar-table thead th{
+  position:sticky;top:0;z-index:1;background:var(--paper-2);font-weight:400;white-space:nowrap;
+  font-size:10px;letter-spacing:.12em;color:var(--ink-2);text-align:left;padding:9px 10px;border-bottom:2px solid var(--ink);
+}
+.ar-table td{padding:7px 10px;border-bottom:1px dotted var(--rule);vertical-align:middle}
+.ar-table tbody tr:hover{background:rgba(165,42,30,.045)}
+.ar-table .rk{width:46px;font-family:Georgia,serif;color:var(--red);font-variant-numeric:tabular-nums}
+.ar-table .model a{font-family:var(--serif);font-size:13.5px;text-decoration:none}
+.ar-table .model a:hover{color:var(--red);text-decoration:underline}
+.ar-table .vendor{white-space:nowrap;color:var(--ink-2);font-size:11.5px}
+.ar-table .cty{color:var(--muted);font-size:10px;margin-left:4px}
+.ar-table .num{text-align:right;font-variant-numeric:tabular-nums;font-size:11.5px;white-space:nowrap}
+.ar-table .score{font-family:Georgia,serif;font-size:13px;color:var(--ink)}
+.ar-table .ci,.ar-table .votes{color:var(--muted);font-size:10.5px}
+.arena-hf{margin-top:10px}
+
+/* ---------- GitHub 中文版 ---------- */
+.gh-charts{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:18px}
+.gh-charts .panel{background:var(--paper);padding:16px 18px;min-width:0}
+.ar-table .gh-repo{min-width:0}
+.ar-table .gh-repo a{font-family:var(--serif);font-size:13.5px;text-decoration:none}
+.ar-table .gh-repo a:hover{color:var(--red);text-decoration:underline}
+.gh-desc{display:block;font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.65;margin-top:3px;white-space:normal}
+.gh-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.gh-tag{font-family:var(--sans);font-size:9.5px;color:var(--ink-2);border:1px solid var(--rule);background:rgba(255,255,255,.45);padding:1px 5px;border-radius:2px}
+
+@media(max-width:1080px){
+  .sections{column-count:2}
+  .charts{grid-template-columns:1fr 1fr}
+  .charts .panel:first-child{grid-column:1/-1}
+}
+@media(max-width:820px){
+  .wrap{padding:0 16px 40px}
+  .mast-main{grid-template-columns:1fr}
+  .mast-side{display:none}
+  .seal{display:none}
+  .front{grid-template-columns:1fr}
+  .lead-main{border-right:none;padding-right:0;border-bottom:1px solid var(--rule)}
+  .lead-side{padding-left:0}
+  .top-list{grid-template-columns:1fr}
+  .sections{column-count:1}
+  .charts{grid-template-columns:1fr}
+  .timeline{column-count:1}
+  .skeleton{grid-template-columns:1fr}
+  .sk-col{border-right:none;padding-right:0}
+  .tab{padding:12px 18px}
+  .refresh-status{margin-left:0;width:100%}
+  .m-head,.m-row{grid-template-columns:30px minmax(0,1fr) 56px 54px}
+  .m-bar,.m-head span:nth-child(3){display:none}
+  .board-head .note{margin-left:0;width:100%}
+  .board-stats{grid-template-columns:repeat(2,1fr)}
+  .arena-charts{grid-template-columns:1fr}
+  .elo-row{grid-template-columns:18px minmax(0,1fr) 46px}
+  .elo-track{display:none}
+  .ar-table .ci,.ar-table .cty{display:none}
+  .ar-table thead th:nth-child(5){display:none}
+  .gh-charts{grid-template-columns:1fr}
+  .gh-table thead th:nth-child(5),.gh-table tbody td:nth-child(5){display:none}
+  .ar-table .rk{width:34px}
+  .ar-table .model a{font-size:12.5px}
+  .ar-table thead th{padding:8px 6px}
+  .ar-table td{padding:6px}
+  .ar-table-head{flex-wrap:wrap;gap:2px 10px}
+}
+@media print{
+  body{background:#fff}
+  .toolbar,.tabs,.ticker,.seal,.mast-side,.refresh-status,.status-bar .chips{display:none!important}
+  .wrap{max-width:none;padding:0}
+  a{color:#000!important;text-decoration:none!important}
+  .sections{column-count:2}
+  .item,.sec,.tl-item,.top-item{break-inside:avoid}
+  .front{border-bottom:1px solid #000}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="mast-top">
+      <span>全球人工智能情报汇编 · 自动采集</span>
+      <span id="mast-date">—</span>
+      <span>第 <b id="mast-issue">—</b> 期 · 主编：自动采编</span>
+    </div>
+    <div class="mast-main">
+      <div class="mast-side left">日报 · 周报 · 月报<br>海内外媒体 · GitHub · arXiv</div>
+      <h1 class="mast-title"><span>AI</span> 情报</h1>
+      <div class="mast-side right">每次打开自动更新<br>离线可读上次缓存</div>
+    </div>
+    <div class="mast-sub">海内外媒体 · 开源项目 · 论文速递 · 模型热榜</div>
+    <div class="seal">AI情报</div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-period="daily">日 报</button>
+    <button class="tab" data-period="weekly">周 报</button>
+    <button class="tab" data-period="monthly">月 报</button>
+    <button class="tab" data-period="sources">数据源</button>
+    <button class="tab" data-period="models">模型排行榜</button>
+    <button class="tab" data-period="github">GitHub 中文</button>
+  </nav>
+
+  <div class="ticker" id="ticker" hidden>
+    <span class="ticker-label">快讯</span>
+    <div class="ticker-view"><div class="ticker-track" id="ticker-track"></div></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn primary" id="btn-refresh">更新本期</button>
+    <label class="switch"><input type="checkbox" id="chk-auto" checked> 自动刷新</label>
+    <input class="search" id="inp-search" type="search" placeholder="搜索标题 / 摘要 / 来源…" autocomplete="off">
+    <select id="sel-lang">
+      <option value="all">全部语言</option>
+      <option value="zh">中文</option>
+      <option value="en">英文</option>
+    </select>
+    <select id="sel-src"><option value="all">全部来源</option></select>
+    <span class="proxy-flag" id="proxy-flag">检测本地服务…</span>
+    <span class="refresh-status" id="refresh-status">准备中…</span>
+    <button class="btn" id="btn-print">打印 / 存 PDF</button>
+  </div>
+
+  <div class="notice" id="proxy-notice" hidden></div>
+
+  <main class="paper" id="paper"></main>
+
+  <footer>
+    <div class="foot-brand">AI 情报 · 每日 / 每周 / 每月</div>
+    <p class="foot-note">本报由浏览器端自动汇集公开 RSS / API 生成，标题与摘要版权归原媒体所有；点击标题跳转原文。</p>
+    <div id="foot-meta">—</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* =========================================================
+   0. 基础常量与工具
+   ========================================================= */
+var DAY = 86400000;
+var TTL = 15 * 60 * 1000;              // 缓存有效期：15 分钟
+var CACHE_KEY = "ai-paper-cache-v5";
+var TOKEN_KEY = "ai-paper-gh-token";
+var INTERVAL_KEY = "ai-paper-interval";
+
+var PERIODS = {
+  daily:   { key:"daily",   label:"日报", days:1,  cn:"今日", en:"DAILY" },
+  weekly:  { key:"weekly",  label:"周报", days:7,  cn:"本周", en:"WEEKLY" },
+  monthly: { key:"monthly", label:"月报", days:30, cn:"本月", en:"MONTHLY" }
+};
+
+var CATS = ["模型与产品","研究前沿","开源与工具","产业与资本","政策与治理","算力与硬件","观点与教程","其他动态"];
+var CAT_SUB = {
+  "模型与产品":"新模型 · 新产品","研究前沿":"论文 · 成果","开源与工具":"项目 · 工具",
+  "产业与资本":"融资 · 市场","政策与治理":"监管 · 标准","算力与硬件":"芯片 · 数据中心",
+  "观点与教程":"访谈 · 教程","其他动态":"短讯 · 动态"
+};
+
+var TASK_CN = {
+  "text-generation":"文本生成","text2text-generation":"文本转换","text-to-image":"文生图",
+  "image-to-image":"图生图","image-to-video":"图生视频","text-to-video":"文生视频",
+  "image-text-to-text":"图文理解","image-to-text":"图像描述","any-to-any":"多模态转换",
+  "text-to-3d":"文生 3D","image-to-3d":"图生 3D","text-to-audio":"音频生成",
+  "automatic-speech-recognition":"语音识别","speech-to-text":"语音转写","text-to-speech":"语音合成",
+  "audio-to-audio":"音频转换","audio-classification":"音频分类","voice-activity-detection":"语音检测",
+  "text-classification":"文本分类","token-classification":"序列标注","question-answering":"问答",
+  "visual-question-answering":"视觉问答","summarization":"摘要生成","translation":"机器翻译",
+  "fill-mask":"完形填空","sentence-similarity":"句子相似度","feature-extraction":"特征提取",
+  "image-feature-extraction":"图像特征","image-classification":"图像分类","object-detection":"目标检测",
+  "image-segmentation":"图像分割","depth-estimation":"深度估计","mask-generation":"掩码生成",
+  "keypoint-detection":"关键点检测","video-classification":"视频分类","reinforcement-learning":"强化学习",
+  "robotics":"机器人","graph-ml":"图学习","tabular-classification":"表格分类",
+  "tabular-regression":"表格回归","time-series-forecasting":"时序预测","text-ranking":"文本排序"
+};
+function taskCN(tag){
+  if(!tag) return "模型";
+  return TASK_CN[tag] || tag;
+}
+
+function $(s, r){ return (r || document).querySelector(s); }
+function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];
+  });
+}
+function pad2(n){ return n < 10 ? "0" + n : "" + n; }
+function fmtDate(ts){
+  var d = new Date(ts);
+  return d.getFullYear() + "." + pad2(d.getMonth()+1) + "." + pad2(d.getDate());
+}
+function fmtClock(ts){
+  var d = new Date(ts);
+  return pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+}
+function fmtTime(ts, period){
+  if(!ts) return "";
+  if(period === "daily") return fmtClock(ts);
+  var d = new Date(ts);
+  return (d.getMonth()+1) + "/" + d.getDate();
+}
+function fmtNum(n){
+  n = Number(n) || 0;
+  if(n >= 100000000) return (n/100000000).toFixed(1) + "亿";
+  if(n >= 10000) return (n/10000).toFixed(1) + "万";
+  if(n >= 1000) return (n/1000).toFixed(1) + "k";
+  return String(n);
+}
+function stripHtml(s){
+  if(!s) return "";
+  try{
+    var d = new DOMParser().parseFromString(String(s), "text/html");
+    return (d.body ? d.body.textContent : "").replace(/\s+/g, " ").trim();
+  }catch(e){
+    return String(s).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  }
+}
+function safeGet(k){
+  try{ return localStorage.getItem(k); }catch(e){ return null; }
+}
+function safeSet(k, v){
+  try{ localStorage.setItem(k, v); }catch(e){ /* 隐私模式忽略 */ }
+}
+function safeJSON(k, dft){
+  try{
+    var v = localStorage.getItem(k);
+    return v ? JSON.parse(v) : dft;
+  }catch(e){ return dft; }
+}
+function heatOf(a, days){
+  days = days || 1;
+  var ageH = Math.max(0, (Date.now() - a.ts) / 3600000);
+  var w = Number(a.weight) || 0;
+  var base;
+  if(a.platform === "hn") base = Math.log10(1 + w) * 22;
+  else if(a.platform === "github") base = Math.log10(1 + w) * 20;
+  else if(a.platform === "reddit") base = Math.log10(1 + w) * 16;
+  else if(a.platform === "hf") base = Math.log10(1 + w) * 14;
+  else if(a.platform === "arxiv") base = 5;
+  else base = 4;
+  var rec = Math.max(0, 36 * (1 - ageH / (days * 24 + 6)));
+  return base + rec;
+}
+function describeError(e){
+  var m = (e && e.message) || String(e || "未知错误");
+  if(/abort/i.test(m)) return "超时";
+  if(/Failed to fetch|NetworkError|Load failed/i.test(m)) return "网络或跨域失败";
+  if(/HTTP 403/.test(m)) return "被限流";
+  return m.slice(0, 52);
+}
+function pad3(n){ return n < 10 ? "00" + n : (n < 100 ? "0" + n : "" + n); }
+function dayOfYear(d){
+  var start = new Date(d.getFullYear(), 0, 1);
+  return Math.floor((d - start) / DAY) + 1;
+}
+function uniq(arr){
+  var seen = Object.create(null), out = [];
+  for(var i = 0; i < arr.length; i++){
+    if(!seen[arr[i]]){ seen[arr[i]] = 1; out.push(arr[i]); }
+  }
+  return out;
+}
+
+/* =========================================================
+   1. 采集源定义
+   ========================================================= */
+var FEEDS = [
+  { id:"qbitai",     name:"量子位",        url:"https://www.qbitai.com/feed",                                          lang:"zh" },
+  { id:"leiphone",   name:"雷锋网",        url:"https://www.leiphone.com/feed",                                        lang:"zh", general:true },
+  { id:"infoq",      name:"InfoQ 中文",    url:"https://www.infoq.cn/feed",                                            lang:"zh", general:true },
+  { id:"tmtpost",    name:"钛媒体",        url:"https://www.tmtpost.com/rss.xml",                                      lang:"zh", general:true },
+  { id:"ifanr",      name:"爱范儿",        url:"https://www.ifanr.com/feed",                                           lang:"zh", general:true },
+  { id:"ithome",     name:"IT之家",        url:"https://www.ithome.com/rss/",                                          lang:"zh", general:true },
+  { id:"techcrunch", name:"TechCrunch",   url:"https://techcrunch.com/category/artificial-intelligence/feed/",        lang:"en" },
+  { id:"verge",      name:"The Verge",    url:"https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",    lang:"en" },
+  { id:"mittr",      name:"MIT Tech Review", url:"https://www.technologyreview.com/topic/artificial-intelligence/feed", lang:"en" },
+  { id:"openai",     name:"OpenAI",       url:"https://openai.com/news/rss.xml",                                      lang:"en" },
+  { id:"deepmind",   name:"Google DeepMind", url:"https://deepmind.google/blog/rss.xml",                               lang:"en" },
+  { id:"hfblog",     name:"Hugging Face 博客", url:"https://huggingface.co/blog/feed.xml",                            lang:"en" }
+];
+
+var AI_RE = /(人工智能|\bAI\b|AIGC|大模型|模型|智能体|\bAgent\b|机器学习|深度学习|神经网络|算力|\bGPU\b|芯片|OpenAI|ChatGPT|\bGPT|Claude|Gemini|Llama|Qwen|DeepSeek|Mistral|Sora|英伟达|NVIDIA|Anthropic|Midjourney|Stable Diffusion|机器人|自动驾驶|具身智能|\bLLM\b|transformer|diffusion|neural|robot|autonomous)/i;
+
+var GN = [
+  { id:"zh-ai",  name:"Google 新闻·人工智能", q:"人工智能",           lang:"zh" },
+  { id:"zh-llm", name:"Google 新闻·大模型",   q:"大模型",             lang:"zh" },
+  { id:"en-ai",  name:"Google News·AI",      q:"artificial intelligence", lang:"en" }
+];
+
+var PROXIES = [
+  function(u){ return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); },
+  function(u){ return "https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(u); },
+  function(u){ return "https://corsproxy.io/?url=" + encodeURIComponent(u); }
+];
+var proxyTurn = 0;
+
+/* 本地采集服务（随「启动报纸.bat」一起运行）可绕过浏览器跨域限制 */
+var LocalProxy = { base: "http://127.0.0.1:8765", ok: false, ready: null };
+
+function detectLocalProxy(force){
+  if(LocalProxy.ready && !force) return LocalProxy.ready;
+  LocalProxy.ready = new Promise(function(resolve){
+    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 1800) : null;
+    fetch(LocalProxy.base + "/ping", { cache:"no-store", signal: ctrl ? ctrl.signal : undefined })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ LocalProxy.ok = !!(d && d.ok); })
+      .catch(function(){ LocalProxy.ok = false; })
+      .then(function(){
+        if(timer) clearTimeout(timer);
+        updateProxyBadge();
+        resolve(LocalProxy.ok);
+      });
+  });
+  return LocalProxy.ready;
+}
+
+function updateProxyBadge(){
+  var el = document.getElementById("proxy-flag");
+  var note = document.getElementById("proxy-notice");
+  if(!el) return;
+  if(LocalProxy.ok){
+    el.className = "proxy-flag ok";
+    el.textContent = "本地服务已连接";
+    el.title = "全部海内外 RSS / arXiv 信源可用";
+    if(note){ note.hidden = true; note.innerHTML = ""; }
+  }else{
+    el.className = "proxy-flag off";
+    el.textContent = "本地服务未启动";
+    el.title = "双击「启动报纸.bat」可启用全部海内外信源";
+    if(note){
+      note.hidden = false;
+      note.innerHTML = "<b>提示：</b>未检测到本地采集服务，当前只能直连 Hacker News / GitHub / Dev.to / OpenAlex 等开放接口，" +
+        "海内外媒体 RSS 与 arXiv 会被浏览器跨域策略拦截。双击同目录下的 <b>启动报纸.bat</b>，即可自动开启全部信源。";
+    }
+  }
+}
+
+var mem = new Map();   // 会话级请求缓存（跨日报/周报/月报复用）
+function memo(key, ttl, fn){
+  var hit = mem.get(key);
+  if(hit && Date.now() - hit.at < ttl) return hit.p;
+  var p = fn();
+  mem.set(key, { at: Date.now(), p: p });
+  p.catch(function(){ mem.delete(key); });
+  return p;
+}
+
+/* =========================================================
+   2. 网络层
+   ========================================================= */
+function fetchText(url, options, timeout){
+  options = options || {};
+  timeout = timeout || 14000;
+  var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, timeout) : null;
+  var opt = { signal: ctrl ? ctrl.signal : undefined, cache: "no-store" };
+  if(options.headers) opt.headers = options.headers;
+  return fetch(url, opt).then(function(r){
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    return r.text();
+  }).then(function(t){
+    if(timer) clearTimeout(timer);
+    return t;
+  }, function(e){
+    if(timer) clearTimeout(timer);
+    throw e;
+  });
+}
+function fetchJSON(url, options, timeout){
+  return fetchText(url, options, timeout).then(function(t){
+    try{ return JSON.parse(t); }
+    catch(e){ throw new Error("JSON 解析失败"); }
+  });
+}
+function fetchViaProxy(url, timeout){
+  return detectLocalProxy().then(function(ok){
+    if(ok){
+      return fetchText(LocalProxy.base + "/proxy?url=" + encodeURIComponent(url), {}, timeout || 20000);
+    }
+    return fetchPublicProxy(url, timeout);
+  });
+}
+function fetchPublicProxy(url, timeout){
+  var start = proxyTurn++ % PROXIES.length;
+  var order = [];
+  for(var i = 0; i < PROXIES.length; i++) order.push(PROXIES[(start + i) % PROXIES.length]);
+
+  function attempt(i){
+    if(i >= order.length) return Promise.reject(new Error("全部代理均失败"));
+    return fetchText(order[i](url), {}, timeout || 9000).then(function(txt){
+      if(!txt || txt.length < 80) throw new Error("代理返回空内容");
+      if(/^\s*<!doctype html/i.test(txt) && txt.length < 400) throw new Error("代理返回错误页");
+      return txt;
+    }).catch(function(){ return attempt(i + 1); });
+  }
+  return attempt(0);
+}
+function fetchJSONSmart(url){
+  return detectLocalProxy().then(function(ok){
+    if(!ok) return fetchJSON(url);
+    return fetchText(LocalProxy.base + "/proxy?url=" + encodeURIComponent(url), {}, 20000).then(function(t){
+      try{ return JSON.parse(t); }
+      catch(e){ throw new Error("JSON 解析失败"); }
+    });
+  });
+}
+function pool(tasks, limit){
+  var queue = tasks.slice();
+  var workers = [];
+  var n = Math.min(limit, queue.length);
+  for(var i = 0; i < n; i++){
+    workers.push((function loop(){
+      if(!queue.length) return Promise.resolve();
+      var t = queue.shift();
+      return t().catch(function(){ /* 单任务失败已记录 */ }).then(loop);
+    })());
+  }
+  return Promise.all(workers);
+}
+
+/* =========================================================
+   2.5 开源与工具：英文简介中文化
+   走本地代理调用翻译接口，失败保留原文，不阻断采集。
+   ========================================================= */
+var GT_BASE = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q=";
+var ZH_MEMO = {};
+
+function translateOne(text){
+  text = String(text || "").replace(/\s+/g, " ").trim();
+  if(!text || /[\u4e00-\u9fa5]/.test(text) || !/[A-Za-z]{3}/.test(text)) return Promise.resolve(text);
+  if(ZH_MEMO[text] != null) return Promise.resolve(ZH_MEMO[text]);
+  return fetchViaProxy(GT_BASE + encodeURIComponent(text.slice(0, 800)), 10000).then(function(txt){
+    var data = JSON.parse(txt);
+    var out = (data[0] || []).map(function(seg){ return (seg && seg[0]) || ""; }).join("").trim();
+    if(!out) throw new Error("空译文");
+    ZH_MEMO[text] = out;
+    return out;
+  }).catch(function(){ return text; });
+}
+
+function zhGithubItem(a){
+  var repo = String(a.title || "").split(" · ")[0];
+  var desc = String(a.summary || "").trim();
+  return translateOne(desc).then(function(zh){
+    var ex = a.extra || {};
+    var parts = ["开源项目 " + repo];
+    if(ex.lang) parts.push("主要语言 " + ex.lang);
+    if(ex.stars != null) parts.push("星标 " + fmtNum(ex.stars));
+    if(ex.forks != null) parts.push("Fork " + fmtNum(ex.forks));
+    var intro = parts.join(" · ") + "。";
+    if(zh && zh !== desc) intro += "简介：" + zh;
+    else if(desc) intro += "简介（原文）：" + desc;
+    else intro += "仓库暂无简介。";
+    a.title = repo;
+    a.summary = intro;
+  });
+}
+
+function zhTextItem(a){
+  var t = String(a.title || ""), s = String(a.summary || "");
+  return translateOne(t).then(function(zt){
+    a.title = zt || t;
+    return translateOne(s);
+  }).then(function(zs){ a.summary = zs || s; });
+}
+
+function zhLocalize(list){
+  var targets = list.filter(function(a){
+    if(a.cat !== "开源与工具" || a.lang !== "en") return false;
+    return /[A-Za-z]/.test((a.title || "") + " " + (a.summary || ""));
+  }).slice(0, 30);
+  if(!targets.length) return Promise.resolve();
+  return pool(targets.map(function(a){
+    return function(){
+      return (a.platform === "github" ? zhGithubItem(a) : zhTextItem(a)).catch(function(){});
+    };
+  }), 4);
+}
+
+/* =========================================================
+   3. RSS 解析
+   ========================================================= */
+function childText(el, names){
+  for(var i = 0; i < names.length; i++){
+    var name = names[i].toLowerCase();
+    var kids = el.children || [];
+    for(var j = 0; j < kids.length; j++){
+      var c = kids[j];
+      if(c.localName && c.localName.toLowerCase() === name && c.textContent && c.textContent.trim()){
+        return c.textContent.trim();
+      }
+    }
+  }
+  return "";
+}
+function childLink(el){
+  var kids = el.children || [];
+  for(var i = 0; i < kids.length; i++){
+    var c = kids[i];
+    if(c.localName === "link"){
+      if(c.getAttribute("href")) return c.getAttribute("href");
+      if(c.textContent && c.textContent.trim()) return c.textContent.trim();
+    }
+  }
+  return "";
+}
+function parseFeed(xml, source){
+  var doc;
+  try{ doc = new DOMParser().parseFromString(xml, "text/xml"); }
+  catch(e){ throw new Error("RSS 解析失败"); }
+  if(doc.querySelector("parsererror")) throw new Error("RSS 格式错误");
+
+  var nodes = Array.prototype.slice.call(doc.getElementsByTagName("item"))
+    .concat(Array.prototype.slice.call(doc.getElementsByTagName("entry")));
+
+  return nodes.map(function(n){
+    var title = stripHtml(childText(n, ["title"]));
+    var link = childLink(n);
+    var tsRaw = childText(n, ["pubDate","published","updated","date","dc:date"]);
+    var ts = Date.parse(tsRaw) || 0;
+    var sum = stripHtml(childText(n, ["description","summary","content","content:encoded","encoded"]));
+    return {
+      title: title,
+      url: link,
+      ts: ts,
+      summary: sum.slice(0, 220),
+      source: source.name,
+      sourceId: source.id,
+      lang: source.lang || "en",
+      platform: "rss",
+      weight: 0
+    };
+  }).filter(function(a){
+    return a.title && a.url && a.ts > 0;
+  });
+}
+function loadFeed(f, cutoff){
+  return memo("feed:" + f.id, 20 * 60000, function(){
+    return fetchViaProxy(f.url).then(function(xml){
+      return parseFeed(xml, f);
+    });
+  }).then(function(list){
+    return list.filter(function(a){
+      if(a.ts < cutoff || a.ts > Date.now() + 6 * 3600000) return false;
+      if(f.general && !AI_RE.test(a.title + " " + (a.summary || ""))) return false;
+      return true;
+    });
+  });
+}
+
+/* =========================================================
+   4. 各平台采集
+   ========================================================= */
+function loadHN(query, cutoff){
+  var url = "https://hn.algolia.com/api/v1/search?query=" + encodeURIComponent(query) +
+            "&tags=story&numericFilters=created_at_i>" + Math.floor(cutoff / 1000) + "&hitsPerPage=40";
+  return fetchJSON(url).then(function(data){
+    return (data.hits || []).map(function(h){
+      return {
+        title: h.title || "",
+        url: h.url || ("https://news.ycombinator.com/item?id=" + h.objectID),
+        ts: (h.created_at_i || 0) * 1000,
+        summary: stripHtml(h.story_text || "").slice(0, 180),
+        source: "Hacker News",
+        sourceId: "hn",
+        lang: "en",
+        platform: "hn",
+        weight: h.points || 0,
+        comments: h.num_comments || 0
+      };
+    }).filter(function(a){ return a.title && a.ts; });
+  });
+}
+
+function loadGitHub(kind, sinceDate, cutoff){
+  var q = kind === "new"
+    ? ("topic:llm created:>" + sinceDate)
+    : ("topic:ai stars:>500 pushed:>" + sinceDate);
+  var url = "https://api.github.com/search/repositories?q=" + encodeURIComponent(q) +
+            "&sort=stars&order=desc&per_page=" + (kind === "new" ? 12 : 10);
+  var headers = { "Accept": "application/vnd.github+json" };
+  if(State.ghToken) headers["Authorization"] = "Bearer " + State.ghToken;
+
+  return fetchJSON(url, { headers: headers }).then(function(data){
+    if(!data.items){
+      throw new Error((data.message || "GitHub 返回异常").slice(0, 60));
+    }
+    return data.items.map(function(r){
+      return {
+        title: r.full_name + (r.description ? " · " + r.description : ""),
+        url: r.html_url,
+        ts: Date.parse(r.pushed_at || r.created_at) || Date.now(),
+        summary: (r.description || "").slice(0, 180),
+        source: "GitHub",
+        sourceId: "github",
+        lang: "en",
+        platform: "github",
+        weight: r.stargazers_count || 0,
+        cat: "开源与工具",
+        extra: { stars: r.stargazers_count || 0, lang: r.language, forks: r.forks_count || 0 }
+      };
+    });
+  });
+}
+
+function loadHF(){
+  var url = "https://huggingface.co/api/models?sort=trendingScore&direction=-1&limit=18";
+  return memo("hf-trending", 10 * 60000, function(){
+    return fetchJSONSmart(url).then(function(list){
+      return (list || []).map(function(m){
+        return {
+          title: m.id + (m.pipeline_tag ? " · " + taskCN(m.pipeline_tag) : ""),
+          url: "https://huggingface.co/" + m.id,
+          ts: Date.parse(m.lastModified || m.createdAt) || Date.now(),
+          summary: "Hugging Face 趋势模型 · 点赞 " + (m.likes || 0) + " · 下载 " + (m.downloads || 0),
+          source: "Hugging Face",
+          sourceId: "huggingface",
+          lang: "en",
+          platform: "hf",
+          weight: m.likes || 0,
+          extra: { likes: m.likes || 0, downloads: m.downloads || 0, task: taskCN(m.pipeline_tag) }
+        };
+      });
+    });
+  });
+}
+
+function loadArxiv(cutoff){
+  var url = "https://export.arxiv.org/api/query?search_query=cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.LG" +
+            "&start=0&max_results=40&sortBy=submittedDate&sortOrder=descending";
+  return memo("arxiv", 20 * 60000, function(){
+    return fetchViaProxy(url, 16000).then(function(xml){
+      var doc = new DOMParser().parseFromString(xml, "text/xml");
+      var entries = Array.prototype.slice.call(doc.getElementsByTagName("entry"));
+      return entries.map(function(e){
+        var link = childLink(e);
+        var title = stripHtml(childText(e, ["title"]));
+        return {
+          title: title,
+          url: link || "https://arxiv.org/abs/",
+          ts: Date.parse(childText(e, ["published","updated"])) || 0,
+          summary: stripHtml(childText(e, ["summary"])).slice(0, 200),
+          source: "arXiv",
+          sourceId: "arxiv",
+          lang: "en",
+          platform: "arxiv",
+          weight: 0,
+          cat: "研究前沿"
+        };
+      }).filter(function(a){ return a.title && a.url && a.ts; });
+    });
+  }).then(function(list){
+    return list.filter(function(a){ return a.ts >= cutoff; });
+  });
+}
+
+function loadGoogleNews(g, days){
+  var when = PERIODS[days === 1 ? "daily" : (days === 7 ? "weekly" : "monthly")].key === "daily" ? "1d" : (days <= 7 ? "7d" : "30d");
+  var hl = g.lang === "zh" ? "hl=zh-CN&gl=CN&ceid=CN:zh-Hans" : "hl=en-US&gl=US&ceid=US:en";
+  var url = "https://news.google.com/rss/search?q=" + encodeURIComponent(g.q + " when:" + when) + "&" + hl;
+  var key = "gn:" + g.id + ":" + when;
+
+  return memo(key, 15 * 60000, function(){
+    return fetchViaProxy(url).then(function(xml){
+      var doc = new DOMParser().parseFromString(xml, "text/xml");
+      var items = Array.prototype.slice.call(doc.getElementsByTagName("item"));
+      return items.map(function(n){
+        var title = stripHtml(childText(n, ["title"]));
+        var media = g.name;
+        var idx = title.lastIndexOf(" - ");
+        if(idx > 12){
+          media = title.slice(idx + 3).trim();
+          title = title.slice(0, idx).trim();
+        }
+        return {
+          title: title,
+          url: childText(n, ["link"]),
+          ts: Date.parse(childText(n, ["pubDate"])) || 0,
+          summary: "",
+          source: media.slice(0, 18),
+          sourceId: g.id,
+          lang: g.lang,
+          platform: "gn",
+          weight: 0
+        };
+      }).filter(function(a){ return a.title && a.url && a.ts; }).slice(0, 30);
+    });
+  });
+}
+
+function loadDevTo(period){
+  var top = period === "daily" ? 1 : (period === "weekly" ? 7 : 30);
+  var url = "https://dev.to/api/articles?tag=ai&per_page=18&top=" + top;
+  return memo("devto:" + top, 15 * 60000, function(){
+    return fetchJSON(url).then(function(list){
+      return (list || []).map(function(a){
+        return {
+          title: a.title || "",
+          url: a.url || "",
+          ts: Date.parse(a.published_at) || 0,
+          summary: stripHtml(a.description || "").slice(0, 180),
+          source: "Dev.to",
+          sourceId: "devto",
+          lang: "en",
+          platform: "devto",
+          weight: a.positive_reactions_count || 0,
+          comments: a.comments_count || 0,
+          cat: "观点与教程"
+        };
+      }).filter(function(a){ return a.title && a.url && a.ts; });
+    });
+  });
+}
+
+function openAlexAbstract(inv){
+  if(!inv) return "";
+  var slots = [];
+  Object.keys(inv).forEach(function(word){
+    (inv[word] || []).forEach(function(pos){ slots[pos] = word; });
+  });
+  return slots.filter(Boolean).join(" ").slice(0, 220);
+}
+function loadOpenAlex(days){
+  var from = new Date(Date.now() - days * DAY).toISOString().slice(0, 10);
+  var url = "https://api.openalex.org/works?search=" + encodeURIComponent("artificial intelligence") +
+            "&filter=from_publication_date:" + from + "&sort=publication_date:desc&per-page=25";
+  return memo("openalex:" + from, 20 * 60000, function(){
+    return fetchJSON(url).then(function(data){
+      return (data.results || []).map(function(w){
+        var title = w.title || w.display_name || "";
+        var url2 = w.doi || w.id || "";
+        return {
+          title: stripHtml(title),
+          url: url2,
+          ts: Date.parse(w.publication_date || "") || 0,
+          summary: openAlexAbstract(w.abstract_inverted_index),
+          source: "OpenAlex",
+          sourceId: "openalex",
+          lang: "en",
+          platform: "openalex",
+          weight: w.cited_by_count || 0,
+          cat: "研究前沿"
+        };
+      }).filter(function(a){ return a.title && a.url && a.ts; });
+    });
+  });
+}
+
+/* =========================================================
+   5. 分类与聚合
+   ========================================================= */
+var RULES = [
+  ["政策与治理", /监管|法案|合规|诉讼|版权|立法|禁令|审查|治理|版权|regulation|lawsuit|copyright|antitrust|\bban\b|policy|governance|\bact\b|safety institute/i],
+  ["算力与硬件", /芯片|算力|GPU|TPU|HBM|光刻|晶圆|数据中心|服务器|英伟达|NVIDIA|AMD|台积电|ASIC|wafer|data cent|supercomputer|inference chip/i],
+  ["产业与资本", /融资|投资|收购|估值|上市|IPO|独角兽|营收|财报|裁员|合作|funding|raises?\b|acquisition|valuation|\bIPO\b|revenue|partnership|layoff|billion|million/i],
+  ["研究前沿", /arXiv|论文|研究|基准|数据集|实验|顶会|NeurIPS|ICML|ICLR|CVPR|ACL|paper|benchmark|dataset|researchers?|study|reasoning/i],
+  ["开源与工具", /GitHub|开源|仓库|框架|库|工具|插件|SDK|open.?source|\brepo\b|framework|library|toolkit|tool\b/i],
+  ["模型与产品", /发布|推出|上线|大模型|多模态|智能体|Agent|GPT|Gemini|Claude|Llama|Qwen|DeepSeek|Mistral|Sora|助手|Copilot|功能|模型|\bapp\b|model|launch|release|introduc|rollout|update/i],
+  ["观点与教程", /教程|指南|如何|观点|访谈|复盘|解读|科普|评测|tutorial|guide|how to|opinion|interview|review|explainer|lessons/i]
+];
+function classify(a){
+  if(a.cat) return a.cat;
+  var text = (a.title || "") + " " + (a.summary || "");
+  for(var i = 0; i < RULES.length; i++){
+    if(RULES[i][1].test(text)) return RULES[i][0];
+  }
+  return "其他动态";
+}
+
+function normTitle(t){
+  return String(t || "").toLowerCase().replace(/[\s\p{P}\p{S}]/gu, "").slice(0, 70);
+}
+function urlKey(u){
+  try{
+    var x = new URL(u);
+    return x.host.replace(/^www\./, "") + x.pathname.replace(/\/$/, "");
+  }catch(e){ return ""; }
+}
+function dedupe(list){
+  var map = new Map();
+  for(var i = 0; i < list.length; i++){
+    var a = list[i];
+    var k1 = normTitle(a.title);
+    var k2 = urlKey(a.url);
+    var prev = map.get(k1) || (k2 ? map.get(k2) : null);
+    if(!prev){
+      map.set(k1, a);
+      if(k2) map.set(k2, a);
+    }else if(heatOf(a, 8) > heatOf(prev, 8)){
+      map.set(k1, a);
+      if(k2) map.set(k2, a);
+    }
+  }
+  var out = [], seen = new Set();
+  map.forEach(function(v){
+    if(!seen.has(v)){ seen.add(v); out.push(v); }
+  });
+  return out;
+}
+
+function buildTasks(period, cutoff, sinceDate){
+  var tasks = [];
+  var days = PERIODS[period].days;
+
+  tasks.push({ id:"hn-ai", name:"Hacker News", kind:"API", run:function(){ return loadHN("AI", cutoff); } });
+  tasks.push({ id:"hn-llm", name:"Hacker News", kind:"API", run:function(){ return loadHN("LLM", cutoff); } });
+  tasks.push({ id:"gh-new", name:"GitHub 新项目", kind:"API", run:function(){ return loadGitHub("new", sinceDate, cutoff); } });
+  tasks.push({ id:"gh-hot", name:"GitHub 热门", kind:"API", run:function(){ return loadGitHub("hot", sinceDate, cutoff); } });
+  tasks.push({ id:"hf", name:"Hugging Face", kind:"API", run:function(){ return loadHF(); } });
+  tasks.push({ id:"arxiv", name:"arXiv", kind:"API", run:function(){ return loadArxiv(cutoff); } });
+  tasks.push({ id:"devto", name:"Dev.to", kind:"API", run:function(){ return loadDevTo(period); } });
+  tasks.push({ id:"openalex", name:"OpenAlex", kind:"API", run:function(){ return loadOpenAlex(days); } });
+
+  FEEDS.forEach(function(f){
+    tasks.push({ id:"rss-" + f.id, name:f.name, kind:"RSS", run:function(){ return loadFeed(f, cutoff); } });
+  });
+  GN.forEach(function(g){
+    tasks.push({ id:"gn-" + g.id, name:g.name, kind:"RSS", run:function(){ return loadGoogleNews(g, days); } });
+  });
+  return tasks;
+}
+
+function attemptTask(run, retries){
+  return Promise.resolve().then(run).catch(function(err){
+    if(retries <= 0) throw err;
+    return new Promise(function(r){ setTimeout(r, 700); }).then(function(){
+      return attemptTask(run, retries - 1);
+    });
+  });
+}
+
+function collect(period, onStatus){
+  var p = PERIODS[period];
+  var cutoff = Date.now() - p.days * DAY;
+  var sinceDate = new Date(cutoff).toISOString().slice(0, 10);
+  var tasks = buildTasks(period, cutoff, sinceDate);
+  var statuses = new Map();
+  var all = [];
+
+  var wrapped = tasks.map(function(t){
+    return function(){
+      var start = performance.now();
+      return attemptTask(t.run, 1).then(function(list){
+        var arr = Array.isArray(list) ? list : [];
+        all = all.concat(arr);
+        statuses.set(t.id, {
+          id: t.id, name: t.name, kind: t.kind, ok: true,
+          count: arr.length, ms: Math.round(performance.now() - start)
+        });
+        if(onStatus) onStatus(statuses);
+      }, function(err){
+        statuses.set(t.id, {
+          id: t.id, name: t.name, kind: t.kind, ok: false,
+          count: 0, ms: Math.round(performance.now() - start),
+          error: describeError(err)
+        });
+        if(onStatus) onStatus(statuses);
+        throw err;
+      });
+    };
+  });
+
+  return pool(wrapped, 5).then(function(){
+    var list = all.filter(function(a){
+      return a.ts >= cutoff - 60 * 60000 && a.ts <= Date.now() + 6 * 3600000;
+    });
+    for(var i = 0; i < list.length; i++) list[i].cat = classify(list[i]);
+    list = dedupe(list);
+    list.sort(function(a, b){ return b.ts - a.ts; });
+
+    var trending = all.filter(function(a){ return a.platform === "hf"; })
+      .sort(function(a, b){ return (b.weight || 0) - (a.weight || 0); })
+      .slice(0, 12);
+
+    return {
+      period: period,
+      generatedAt: Date.now(),
+      articles: list,
+      trending: trending,
+      statuses: Array.from(statuses.values())
+    };
+  }).then(function(rep){
+    return zhLocalize(rep.articles).then(function(){ return rep; });
+  });
+}
+
+/* =========================================================
+   6. 状态
+   ========================================================= */
+var State = {
+  period: "daily",
+  reports: {},
+  cache: {},
+  loading: {},
+  auto: true,
+  interval: parseInt(safeGet(INTERVAL_KEY) || "15", 10) * 60000 || 15 * 60000,
+  ghToken: safeGet(TOKEN_KEY) || "",
+  busy: false,
+  arenaDim: "text",
+  arenaCache: {},
+  arenaData: null,
+  arenaLoading: false,
+  arenaLoadingDim: null,
+  arenaError: null,
+  ghHub: null,
+  ghCache: null,
+  ghLoading: false,
+  ghError: null,
+  ghFilter: "hot"
+};
+
+var Filter = { q:"", lang:"all", src:"all" };
+
+var els = {
+  paper: $("#paper"),
+  tabs: $("#tabs"),
+  ticker: $("#ticker"),
+  tickerTrack: $("#ticker-track"),
+  status: $("#refresh-status"),
+  search: $("#inp-search"),
+  lang: $("#sel-lang"),
+  src: $("#sel-src"),
+  btnRefresh: $("#btn-refresh"),
+  chkAuto: $("#chk-auto"),
+  btnPrint: $("#btn-print"),
+  mastDate: $("#mast-date"),
+  mastIssue: $("#mast-issue"),
+  footMeta: $("#foot-meta")
+};
+
+function filtered(list){
+  var q = Filter.q.trim().toLowerCase();
+  return list.filter(function(a){
+    if(Filter.lang !== "all" && a.lang !== Filter.lang) return false;
+    if(Filter.src !== "all" && a.source !== Filter.src) return false;
+    if(q){
+      var text = (a.title + " " + (a.summary || "") + " " + a.source).toLowerCase();
+      if(text.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+}
+
+/* =========================================================
+   7. 渲染：公共片段
+   ========================================================= */
+function itemHTML(a, period, withSummary){
+  var meta = [];
+  meta.push('<span class="src">' + esc(a.source) + "</span>");
+  meta.push("<span>" + fmtTime(a.ts, period) + "</span>");
+  if(a.platform === "hn" && a.weight) meta.push('<span class="hot">热度 ' + a.weight + "</span>");
+  if(a.platform === "github" && a.extra && a.extra.stars != null){
+    meta.push('<span class="hot">★ ' + fmtNum(a.extra.stars) + "</span>");
+    if(a.extra.lang) meta.push("<span>" + esc(a.extra.lang) + "</span>");
+  }
+  if(a.platform === "reddit" && a.weight) meta.push('<span class="hot">▲ ' + fmtNum(a.weight) + "</span>");
+  if(a.platform === "devto" && a.weight) meta.push('<span class="hot">♥ ' + fmtNum(a.weight) + "</span>");
+  if(a.platform === "openalex" && a.weight) meta.push('<span class="hot">引用 ' + fmtNum(a.weight) + "</span>");
+  if(a.comments) meta.push("<span>" + a.comments + " 评论</span>");
+  if(a.platform === "arxiv") meta.push('<span class="tag">论文</span>');
+
+  var sum = (withSummary && a.summary) ? '<p class="sum">' + esc(a.summary) + "</p>" : "";
+  return '<article class="item"><h4><a href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer">' +
+         esc(a.title) + "</a></h4><div class=\"meta\">" + meta.join("") + "</div>" + sum + "</article>";
+}
+
+function sectionHTML(cat, items, period, limit){
+  if(!items.length) return "";
+  var list = items.slice(0, limit || 10);
+  return '<section class="sec"><div class="sec-head"><h3>' + esc(cat) + "</h3>" +
+         '<span class="en">' + esc(CAT_SUB[cat] || "") + "</span>" +
+         '<span class="cnt">' + items.length + " 条</span></div>" +
+         list.map(function(a){ return itemHTML(a, period, true); }).join("") +
+         "</section>";
+}
+
+function statHTML(rep){
+  var list = filtered(rep.articles);
+  var zh = list.filter(function(a){ return a.lang === "zh"; }).length;
+  var en = list.filter(function(a){ return a.lang === "en"; }).length;
+  var gh = list.filter(function(a){ return a.platform === "github"; }).length;
+  var papers = list.filter(function(a){ return a.platform === "arxiv"; }).length;
+  var okSrc = rep.statuses.filter(function(s){ return s.ok; }).length;
+  return '<div class="stat-grid">' +
+    '<div class="stat"><b>' + list.length + ' <i>条</i></b><span>收录情报</span></div>' +
+    '<div class="stat"><b>' + okSrc + ' / ' + rep.statuses.length + '</b><span>可用信源</span></div>' +
+    '<div class="stat"><b>' + zh + ' / ' + en + '</b><span>中文 / 英文</span></div>' +
+    '<div class="stat"><b>' + (gh + papers) + '</b><span>开源 ' + gh + ' · 论文 ' + papers + '</span></div>' +
+  "</div>";
+}
+
+function statusBarHTML(rep){
+  if(!rep || !rep.statuses || !rep.statuses.length) return "";
+  var chips = rep.statuses.slice().sort(function(a, b){
+    return (a.ok === b.ok) ? a.name.localeCompare(b.name) : (a.ok ? -1 : 1);
+  }).map(function(s){
+    if(s.ok){
+      return '<span class="chip ok" title="耗时 ' + s.ms + 'ms">' + esc(s.name) + "<b>" + s.count + "</b></span>";
+    }
+    return '<span class="chip fail" title="' + esc(s.error || "失败") + '">' + esc(s.name) + "<b>×</b></span>";
+  }).join("");
+
+  var bad = rep.statuses.filter(function(s){ return !s.ok; }).length;
+  var tip = bad === 0
+    ? "全部信源采集成功"
+    : (bad + " 个信源失败（多为代理限流或网络波动，鼠标悬停查看原因）");
+
+  return '<div class="end-mark">本期完</div>' +
+         '<div class="status-bar"><div class="st-head"><b>采集状态</b>' +
+         '<span>更新于 ' + fmtDate(rep.generatedAt) + " " + fmtClock(rep.generatedAt) + " · " + tip + "</span>" +
+         '</div><div class="chips">' + chips + "</div></div>";
+}
+
+function briefHTML(rep, days){
+  var p = PERIODS[rep.period] || PERIODS.daily;
+  var list = filtered(rep.articles);
+  if(!list.length) return "";
+  var byCat = {};
+  list.forEach(function(a){ byCat[a.cat] = (byCat[a.cat] || 0) + 1; });
+  var topCat = Object.keys(byCat).sort(function(a, b){ return byCat[b] - byCat[a]; })[0];
+  var gh = list.filter(function(a){ return a.platform === "github"; })
+    .sort(function(a, b){ return (b.extra ? b.extra.stars : 0) - (a.extra ? a.extra.stars : 0); })[0];
+  var parts = [];
+  parts.push(p.cn + "共收录 <b>" + list.length + "</b> 条情报");
+  parts.push("「" + topCat + "」以 " + byCat[topCat] + " 条居首");
+  if(gh) parts.push("开源侧最热为 <b>" + esc(gh.title.split(" · ")[0]) + "</b>（★" + fmtNum(gh.extra ? gh.extra.stars : 0) + "）");
+  var papers = list.filter(function(a){ return a.platform === "arxiv"; }).length;
+  if(papers) parts.push("论文速递 " + papers + " 篇");
+  return '<p class="lead-sum" style="border-left-color:var(--rule-strong);color:var(--muted);font-size:13px">' +
+         "编辑短评：" + parts.join("；") + "。</p>";
+}
+
+function modelBoardHTML(rep, limit, title){
+  var list = (rep && rep.trending) ? rep.trending.slice(0, limit || 10) : [];
+  if(!list.length) return "";
+  var max = list.reduce(function(m, a){
+    return Math.max(m, Number(a.extra && a.extra.likes) || 0);
+  }, 0) || 1;
+  var rows = list.map(function(a, i){
+    var likes = Number(a.extra && a.extra.likes) || 0;
+    var dl = Number(a.extra && a.extra.downloads) || 0;
+    var task = (a.extra && a.extra.task) || "模型";
+    var name = String(a.title || "").split(" · ")[0];
+    var pct = Math.max(4, Math.round(likes / max * 100));
+    return '<div class="m-row">' +
+      '<span class="m-no">' + (i + 1) + "</span>" +
+      '<span class="m-name"><a href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer" title="' +
+        esc(name + " · " + task) + '">' + esc(name) + '</a><span class="m-task">' + esc(task) + "</span></span>" +
+      '<span class="m-bar"><i style="width:' + pct + '%"></i></span>' +
+      '<span class="m-val">' + fmtNum(likes) + "</span>" +
+      '<span class="m-dl">' + fmtNum(dl) + "</span>" +
+    "</div>";
+  }).join("");
+
+  return '<section class="model-board">' +
+      '<div class="board-head"><h3>' + esc(title || "模型排行榜") + '</h3><span class="en">实时热度</span>' +
+        '<span class="note">Hugging Face 趋势模型 · 按点赞热度</span></div>' +
+      '<div class="m-table">' +
+        '<div class="m-head"><span>#</span><span>模型 / 任务</span><span>热度</span><span>点赞</span><span>下载</span></div>' +
+        rows +
+      "</div>" +
+    "</section>";
+}
+
+/* =========================================================
+   8. 渲染：日报
+   ========================================================= */
+function renderDaily(rep){
+  var all = filtered(rep.articles);
+  if(!all.length) return emptyHTML(rep);
+
+  var byHeat = all.slice().sort(function(a, b){ return heatOf(b, 1) - heatOf(a, 1); });
+  var lead = byHeat.filter(function(a){ return a.summary && a.summary.length > 30; })[0] || byHeat[0];
+  var rank = byHeat.slice(0, 8);
+
+  var byCat = {};
+  all.forEach(function(a){ (byCat[a.cat] = byCat[a.cat] || []).push(a); });
+
+  var leadHTML =
+    '<div class="lead-main">' +
+      '<div class="kicker"><span class="dot"></span>今日头条<span>' + esc(lead.source) + "</span><span>" +
+        fmtTime(lead.ts, "daily") + "</span></div>" +
+      '<h2 class="lead-title"><a href="' + esc(lead.url) + '" target="_blank" rel="noopener noreferrer">' +
+        esc(lead.title) + "</a></h2>" +
+      (lead.summary ? '<p class="lead-sum">' + esc(lead.summary) + "</p>" : "") +
+      '<div class="lead-meta">' +
+        (lead.platform === "hn" ? "<span>热度 " + lead.weight + " · " + (lead.comments || 0) + " 评论</span>" : "") +
+        (lead.platform === "github" && lead.extra ? "<span>★ " + fmtNum(lead.extra.stars) + (lead.extra.lang ? " · " + esc(lead.extra.lang) : "") + "</span>" : "") +
+        '<span class="src">' + esc(lead.source) + "</span>" +
+        '<span><a href="' + esc(lead.url) + '" target="_blank" rel="noopener noreferrer">阅读原文 →</a></span>' +
+      "</div>" +
+      briefHTML(rep) +
+    "</div>";
+
+  var sideHTML =
+    '<aside class="lead-side">' +
+      '<div class="side-head"><span>今日速览</span><span>' + all.length + " 条</span></div>" +
+      '<ol class="rank">' +
+        rank.map(function(a){
+          return "<li><div><a href=\"" + esc(a.url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+                 esc(a.title) + '</a><span class="rmeta">' + esc(a.source) + " · " + fmtTime(a.ts, "daily") + "</span></div></li>";
+        }).join("") +
+      "</ol>" +
+      statHTML(rep) +
+    "</aside>";
+
+  var sections = CATS.map(function(cat){
+    return sectionHTML(cat, (byCat[cat] || []).sort(function(a, b){ return b.ts - a.ts; }), "daily", 9);
+  }).join("");
+
+  return '<section class="front">' + leadHTML + sideHTML + "</section>" +
+         modelBoardHTML(rep) +
+         '<section class="sections">' + sections + "</section>" +
+         statusBarHTML(rep);
+}
+
+/* =========================================================
+   9. 渲染：周报 / 月报公用部件
+   ========================================================= */
+function buckets(articles, days){
+  var now = new Date(); now.setHours(0, 0, 0, 0);
+  var arr = [];
+  for(var i = days - 1; i >= 0; i--){
+    var d = new Date(now.getTime() - i * DAY);
+    arr.push({ key: d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate(), label: (d.getMonth()+1) + "/" + d.getDate(), n: 0 });
+  }
+  var index = {};
+  arr.forEach(function(b, i){ index[b.key] = i; });
+  articles.forEach(function(a){
+    var d = new Date(a.ts);
+    var k = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+    var i = index[k];
+    if(i != null) arr[i].n++;
+  });
+  return arr;
+}
+function barChartHTML(articles, days){
+  var bs = buckets(articles, days);
+  var max = Math.max.apply(null, bs.map(function(b){ return b.n; }).concat([1]));
+  var bars = bs.map(function(b){
+    var h = Math.max(2, Math.round(b.n / max * 100));
+    return '<div class="bar' + (b.n ? "" : " b0") + '" title="' + b.label + "：" + b.n + ' 条"><i style="height:' + h + '%"></i></div>';
+  }).join("");
+  var step = days > 10 ? Math.ceil(days / 10) : 1;
+  var labels = bs.map(function(b, i){
+    return "<span>" + (i % step === 0 ? b.label : "") + "</span>";
+  }).join("");
+  return '<div class="bars">' + bars + '</div><div class="bar-labels">' + labels + "</div>";
+}
+function hbarsHTML(entries, total, limit){
+  var top = entries.slice(0, limit || 8);
+  var max = Math.max.apply(null, top.map(function(e){ return e.n; }).concat([1]));
+  return top.map(function(e){
+    var pct = Math.round(e.n / max * 100);
+    return '<div class="hbar"><span class="lb" title="' + esc(e.k) + '">' + esc(e.k) + "</span>" +
+           '<span class="tr"><i style="width:' + pct + '%"></i></span>' +
+           '<span class="vl">' + e.n + "</span></div>";
+  }).join("");
+}
+function countBy(list, fn){
+  var m = {};
+  list.forEach(function(a){
+    var k = fn(a) || "其他";
+    m[k] = (m[k] || 0) + 1;
+  });
+  return Object.keys(m).map(function(k){ return { k: k, n: m[k] }; })
+    .sort(function(a, b){ return b.n - a.n; });
+}
+
+var STOP_EN = ("the,a,an,and,or,of,to,in,for,on,with,is,are,was,were,be,been,it,its,this,that,these,those,as,at,by,from,new,how,why,what,when,who,will,can,could,would,should,has,have,had,not,but,more,most,than,then,so,we,you,they,their,our,your,about,into,over,after,before,up,down,out,just,only,also,may,might,like,get,gets,one,two,first,last,now,its,it's,ai,artificial,intelligence,openai,google,microsoft,meta,apple,amazon,tech,technology,report,reports,says,said,new,news,model,models,use,using,used,user,users,best,top,why,what").split(",");
+var STOP_ZH = ("人工智能,大模型,模型,智能,技术,公司,表示,消息,今天,可能,如何,什么,这个,那个,以及,通过,进行,目前,已经,可以,需要,用户,市场,全球,中国,美国,记者,报道,新闻,最新,重磅,刚刚,首次,正式,全面,宣布,推出,发布,上线,全新,首个,一个,我们,他们,你们,自己,但是,因为,所以,如果,没有,就是,还是,这种,这次,今年,去年,明年,以来,以上,以下,方面,领域,问题,情况,相关,有关,其中,同时,此外,目前,正在,已经,将,会,为,与,和,及,或,等,的,了,是,在,有,也,就,都,被,把,对,从,到,以,于,并,而,其,之,者,上,下").split(",");
+var STOP_EN_SET = new Set(STOP_EN);
+var STOP_ZH_SET = new Set(STOP_ZH);
+
+function topKeywords(list, limit){
+  var freq = new Map();
+  function add(k, w){
+    k = k.trim();
+    if(!k || k.length < 2) return;
+    freq.set(k, (freq.get(k) || 0) + w);
+  }
+  list.forEach(function(a){
+    var title = a.title || "";
+    var text = (title + " " + (a.summary || "")).toLowerCase();
+
+    (text.match(/[a-z][a-z0-9\-]{2,20}/g) || []).forEach(function(w){
+      if(STOP_EN_SET.has(w) || /^\d+$/.test(w)) return;
+      add(w, 1.2);
+    });
+
+    var zh = title.replace(/[^\u4e00-\u9fa5]+/g, " ");
+    zh.split(/\s+/).forEach(function(seg){
+      if(seg.length < 2) return;
+      [2, 3, 4].forEach(function(n){
+        if(seg.length < n) return;
+        for(var i = 0; i + n <= seg.length; i++){
+          var g = seg.slice(i, i + n);
+          if(STOP_ZH_SET.has(g)) continue;
+          add(g, n === 2 ? 1 : 1.5);
+        }
+      });
+    });
+  });
+
+  var cands = Array.from(freq.entries())
+    .filter(function(e){ return e[1] >= 3; })
+    .sort(function(a, b){ return b[1] - a[1]; })
+    .slice(0, 140)
+    .map(function(e){ return { k: e[0], n: e[1] }; });
+
+  // 去掉被更长高频词包含的短词（如「智能体」里的「智能」）
+  var out = [];
+  for(var i = 0; i < cands.length; i++){
+    var c = cands[i], covered = false;
+    for(var j = 0; j < out.length; j++){
+      var o = out[j];
+      if(o.k.indexOf(c.k) !== -1 && o.n >= c.n * 0.75){ covered = true; break; }
+      if(c.k.indexOf(o.k) !== -1 && c.n >= o.n * 1.2){ out.splice(j, 1); j--; }
+    }
+    if(!covered) out.push(c);
+    if(out.length >= (limit || 30)) break;
+  }
+  return out.slice(0, limit || 30);
+}
+
+function cloudHTML(list){
+  var kws = topKeywords(list, 30);
+  if(!kws.length) return '<p class="hint">数据量不足，暂无法生成关键词。</p>';
+  var max = kws[0].n, min = kws[kws.length - 1].n;
+  return '<div class="cloud">' + kws.map(function(k){
+    var ratio = (k.n - min) / Math.max(1, max - min);
+    var size = (13 + ratio * 21).toFixed(1);
+    return '<span style="font-size:' + size + 'px" title="出现 ' + k.n + ' 次">' + esc(k.k) + "</span>";
+  }).join("") + "</div>";
+}
+
+function topListHTML(list, period, count){
+  return '<div class="top-list">' + list.slice(0, count || 6).map(function(a, i){
+    return '<article class="top-item"><div class="no">' + pad2(i + 1) + "</div><div>" +
+      '<h4><a href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer">' + esc(a.title) + "</a></h4>" +
+      '<div class="meta"><span>' + esc(a.source) + "</span><span>" + fmtTime(a.ts, period) + "</span>" +
+      (a.platform === "github" && a.extra ? "<span>★ " + fmtNum(a.extra.stars) + "</span>" : "") +
+      (a.platform === "hn" ? "<span>热度 " + a.weight + "</span>" : "") + "</div>" +
+      (a.summary ? '<p class="sum">' + esc(a.summary) + "</p>" : "") +
+      "</div></article>";
+  }).join("") + "</div>";
+}
+
+function timelineHTML(list, period){
+  if(!list.length) return "";
+  return '<div class="timeline">' + list.map(function(a){
+    return '<div class="tl-item"><time>' + fmtTime(a.ts, period) + '</time><div class="tx">' +
+      '<a href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer">' + esc(a.title) + "</a>" +
+      '<span class="src">' + esc(a.source) + "</span></div></div>";
+  }).join("") + "</div>";
+}
+
+/* =========================================================
+   10. 渲染：周报
+   ========================================================= */
+function renderWeekly(rep){
+  var all = filtered(rep.articles);
+  if(!all.length) return emptyHTML(rep);
+
+  var byHeat = all.slice().sort(function(a, b){ return heatOf(b, 7) - heatOf(a, 7); });
+  var gh = all.filter(function(a){ return a.platform === "github"; })
+    .sort(function(a, b){ return (b.extra ? b.extra.stars : 0) - (a.extra ? a.extra.stars : 0); });
+
+  var byCat = {};
+  all.forEach(function(a){ (byCat[a.cat] = byCat[a.cat] || []).push(a); });
+
+  var sections = CATS.map(function(cat){
+    return sectionHTML(cat, (byCat[cat] || []).sort(function(a, b){ return b.ts - a.ts; }), "weekly", 12);
+  }).join("");
+
+  var ghPanel = gh.length
+    ? '<div class="panel"><h3>本周开源榜<small>按星标</small></h3><div class="hbars">' +
+      hbarsHTML(gh.map(function(a){ return { k: a.title.split(" · ")[0], n: a.extra ? a.extra.stars : 0 }; }), gh.length, 8) +
+      '</div><div class="hint" style="margin-top:8px">' +
+      gh.slice(0, 5).map(function(a, i){
+        return '<div style="margin:4px 0"><a href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none">' +
+          (i + 1) + ". " + esc(a.title.split(" · ")[0]) + "</a></div>";
+      }).join("") + "</div></div>"
+    : '<div class="panel"><h3>本周开源榜</h3><p class="hint">GitHub 数据未获取成功，可在「数据源」页填写 Token 后重试。</p></div>';
+
+  return '<section class="week-top">' +
+      '<div class="week-head"><h2>本周头条</h2><span class="en">一周要闻</span>' +
+      '<span style="margin-left:auto;font-family:var(--sans);font-size:11px;color:var(--muted)">' +
+      fmtDate(Date.now() - 6 * DAY) + " — " + fmtDate(Date.now()) + "</span></div>" +
+      topListHTML(byHeat, "weekly", 6) +
+      briefHTML(rep) +
+    "</section>" +
+    '<section class="charts">' +
+      '<div class="panel"><h3>一周发布节奏<small>条 / 天</small></h3>' + barChartHTML(all, 7) + "</div>" +
+      '<div class="panel"><h3>栏目分布</h3>' +
+        hbarsHTML(countBy(all, function(a){ return a.cat; }), all.length, 8) + "</div>" +
+      '<div class="panel"><h3>信源分布</h3>' +
+        hbarsHTML(countBy(all, function(a){ return a.source; }), all.length, 8) + "</div>" +
+    "</section>" +
+    '<section class="charts" style="grid-template-columns:1fr">' + ghPanel + "</section>" +
+    modelBoardHTML(rep) +
+    '<section class="sections">' + sections + "</section>" +
+    statusBarHTML(rep);
+}
+
+/* =========================================================
+   11. 渲染：月报
+   ========================================================= */
+function renderMonthly(rep){
+  var all = filtered(rep.articles);
+  if(!all.length) return emptyHTML(rep);
+
+  var byHeat = all.slice().sort(function(a, b){ return heatOf(b, 30) - heatOf(a, 30); });
+  var byCat = {};
+  all.forEach(function(a){ (byCat[a.cat] = byCat[a.cat] || []).push(a); });
+
+  var sections = CATS.map(function(cat){
+    return sectionHTML(cat, (byCat[cat] || []).sort(function(a, b){ return b.ts - a.ts; }), "monthly", 14);
+  }).join("");
+
+  return '<section class="week-top">' +
+      '<div class="week-head"><h2>月度观察</h2><span class="en">本月全景</span>' +
+      '<span style="margin-left:auto;font-family:var(--sans);font-size:11px;color:var(--muted)">' +
+      fmtDate(Date.now() - 29 * DAY) + " — " + fmtDate(Date.now()) + "</span></div>" +
+      '<div class="charts" style="margin-top:0">' +
+        '<div class="panel"><h3>月度关键词<small>标题词频</small></h3>' + cloudHTML(all) + "</div>" +
+        '<div class="panel"><h3>栏目占比</h3>' + hbarsHTML(countBy(all, function(a){ return a.cat; }), all.length, 8) + "</div>" +
+        '<div class="panel"><h3>信源占比</h3>' + hbarsHTML(countBy(all, function(a){ return a.source; }), all.length, 8) + "</div>" +
+      "</div>" +
+      briefHTML(rep) +
+    "</section>" +
+    '<section class="week-top" style="border-bottom:none">' +
+      '<div class="week-head"><h2>月度大事记</h2><span class="en">按热度排列</span>' +
+      '<span style="margin-left:auto;font-family:var(--sans);font-size:11px;color:var(--muted)">按热度取前 24 条</span></div>' +
+      timelineHTML(byHeat.slice(0, 24), "monthly") +
+    "</section>" +
+    '<section class="charts" style="grid-template-columns:1fr">' +
+      '<div class="panel"><h3>月度发布节奏<small>条 / 天</small></h3>' + barChartHTML(all, 30) + "</div>" +
+    "</section>" +
+    modelBoardHTML(rep) +
+    '<section class="sections">' + sections + "</section>" +
+    statusBarHTML(rep);
+}
+
+/* =========================================================
+   12. 渲染：空态 / 错误 / 加载 / 数据源页
+   ========================================================= */
+function emptyHTML(rep){
+  var bad = rep && rep.statuses ? rep.statuses.filter(function(s){ return !s.ok; }).length : 0;
+  var total = rep && rep.statuses ? rep.statuses.length : 0;
+  return '<div class="empty"><h3>本期暂无可编排的内容</h3>' +
+    '<p>已尝试 ' + total + ' 个信源，失败 ' + bad + ' 个。可能是网络波动、公共 CORS 代理限流，或当前筛选条件过窄。</p>' +
+    '<p>建议：双击同目录「启动报纸.bat」后点击「更新本期」；或在「数据源」页填写 GitHub Token 提高限额。</p>' +
+    '<p><button class="btn primary" data-retry="1">重新采集</button></p></div>' +
+    statusBarHTML(rep);
+}
+
+function renderLoading(period){
+  var p = PERIODS[period];
+  els.paper.innerHTML =
+    '<div class="loading-pane">' +
+      '<div class="load-title">正在编排' + p.label + "…</div>" +
+      '<div class="load-sub">并行采集 Hacker News · GitHub · arXiv · Hugging Face 与海内外媒体 RSS</div>' +
+      '<div class="src-chips" id="load-chips"></div>' +
+      '<div class="skeleton"><div class="sk-col">' +
+        '<div class="sk-line lg" style="width:82%"></div>' +
+        '<div class="sk-line" style="width:96%"></div>' +
+        '<div class="sk-line" style="width:88%"></div>' +
+        '<div class="sk-line md" style="width:55%;margin-top:24px"></div>' +
+        '<div class="sk-line" style="width:90%"></div>' +
+        '<div class="sk-line" style="width:84%"></div>' +
+        '<div class="sk-line" style="width:92%"></div>' +
+      "</div><div>" +
+        '<div class="sk-line md" style="width:70%"></div>' +
+        '<div class="sk-line" style="width:96%"></div>' +
+        '<div class="sk-line" style="width:88%"></div>' +
+        '<div class="sk-line" style="width:92%"></div>' +
+        '<div class="sk-line" style="width:70%"></div>' +
+      "</div></div>" +
+    "</div>";
+}
+function updateLoadingChips(statuses){
+  var box = $("#load-chips");
+  if(!box) return;
+  var arr = Array.from(statuses.values());
+  box.innerHTML = arr.map(function(s){
+    if(s.ok) return '<span class="chip ok">' + esc(s.name) + "<b>" + s.count + "</b></span>";
+    return '<span class="chip fail">' + esc(s.name) + "<b>×</b></span>";
+  }).join("") + '<span class="chip">…</span>';
+}
+
+function renderError(err, period){
+  els.paper.innerHTML = '<div class="empty"><h3>采集中断</h3>' +
+    '<p>' + esc(describeError(err)) + "</p>" +
+    '<p>已保留上次缓存内容；可直接重试。</p>' +
+    '<p><button class="btn primary" data-retry="1">重试</button></p></div>';
+}
+
+/* =========================================================
+   12. 渲染：模型排行榜页
+   ========================================================= */
+/* =========================================================
+   11.5 AI 竞技场（Elo 榜）数据、图形与页面
+   ========================================================= */
+var ARENA_KEY = "ai-paper-arena-v2";
+var ARENA_TTL = 4 * 3600 * 1000;
+var ARENA_DIMS = [
+  { k:"text", label:"文本对话" }, { k:"code", label:"编程开发" }, { k:"vision", label:"视觉理解" },
+  { k:"text-to-image", label:"文生图" }, { k:"image-edit", label:"图像编辑" },
+  { k:"text-to-video", label:"文生视频" }, { k:"image-to-video", label:"图生视频" },
+  { k:"document", label:"文档理解" }, { k:"search", label:"联网搜索" },
+  { k:"agent", label:"智能体" }, { k:"video-edit", label:"视频编辑" }
+];
+
+function arenaDimLabel(k){
+  for(var i = 0; i < ARENA_DIMS.length; i++) if(ARENA_DIMS[i].k === k) return ARENA_DIMS[i].label;
+  return "文本对话";
+}
+
+function loadArena(dim){
+  var url = "https://www.ai-club.cn/rank/arena" + (dim && dim !== "text" ? "/" + dim : "");
+  return memo("arena:" + dim, 10 * 60000, function(){
+    return fetchViaProxy(url, 25000).then(function(html){
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      var rows = doc.querySelectorAll("tr.ar-row");
+      if(!rows.length) throw new Error("榜单解析失败，页面结构可能已变更");
+      var models = [];
+      Array.prototype.forEach.call(rows, function(tr){
+        var a = tr.querySelector(".ar-mlink");
+        if(!a) return;
+        var score = parseFloat((tr.querySelector(".ar-score") || {}).textContent);
+        var ci = parseFloat(((tr.querySelector(".ar-ci") || {}).textContent || "").replace(/[^\d.]/g, ""));
+        var votes = parseInt(((tr.querySelector(".ar-votes") || {}).textContent || "").replace(/[^\d]/g, ""), 10);
+        var logoEl = tr.querySelector(".ar-logo");
+        var logo = logoEl ? (logoEl.getAttribute("src") || "") : "";
+        if(logo && logo.charAt(0) === "/") logo = "https://www.ai-club.cn" + logo;
+        models.push({
+          rank: parseInt(tr.getAttribute("data-rank"), 10) || models.length + 1,
+          name: a.textContent.trim(),
+          url: "https://www.ai-club.cn" + (a.getAttribute("href") || ""),
+          vendor: tr.getAttribute("data-vendor") || "",
+          country: tr.getAttribute("data-country") || "",
+          logo: logo,
+          score: isNaN(score) ? 0 : score,
+          ci: isNaN(ci) ? 0 : ci,
+          votes: isNaN(votes) ? 0 : votes
+        });
+      });
+      var t = doc.querySelector(".ar-chips time");
+      return {
+        dim: dim,
+        dimName: arenaDimLabel(dim),
+        synced: t ? t.textContent.trim() : "",
+        models: models,
+        at: Date.now()
+      };
+    });
+  });
+}
+
+function saveArenaCache(){
+  try{ safeSet(ARENA_KEY, JSON.stringify(State.arenaCache)); }catch(e){}
+}
+
+function ensureArena(dim, force){
+  dim = dim || State.arenaDim || "text";
+  if(State.arenaData && State.arenaData.dim !== dim) State.arenaData = null;
+  State.arenaDim = dim;
+  var hit = State.arenaCache[dim];
+  if(!force && hit && hit.data && Date.now() - hit.at < ARENA_TTL){
+    State.arenaData = hit.data;
+    State.arenaError = null;
+    State.arenaLoading = false;
+    if(State.period === "models"){ renderModels(); updateStatusLine(); }
+    return;
+  }
+  if(State.arenaLoading && State.arenaLoadingDim === dim) return;
+  State.arenaLoading = true;
+  State.arenaLoadingDim = dim;
+  State.arenaError = null;
+  if(State.period === "models") renderModels();
+  loadArena(dim).then(function(data){
+    State.arenaLoading = false;
+    State.arenaData = data;
+    State.arenaCache[dim] = { at: Date.now(), data: data };
+    saveArenaCache();
+    if(State.period === "models"){ renderModels(); updateStatusLine(); updateMasthead(); }
+  }).catch(function(err){
+    State.arenaLoading = false;
+    State.arenaError = describeError(err) || "获取失败";
+    if(State.period === "models"){ renderModels(); updateStatusLine(); }
+  });
+}
+
+function eloChartHTML(models){
+  var top = models.slice(0, 12);
+  if(!top.length) return "";
+  var max = top[0].score;
+  var min = top[top.length - 1].score;
+  var base = min - Math.max(6, (max - min) * 0.35);
+  return top.map(function(m, i){
+    var pct = Math.max(8, Math.round((m.score - base) / ((max - base) || 1) * 100));
+    return '<div class="elo-row"><span class="elo-no">' + (m.rank || i + 1) + "</span>" +
+      '<span class="elo-name" title="' + esc(m.name + " · " + m.vendor) + '">' + esc(m.name) + "</span>" +
+      '<span class="elo-track"><i style="width:' + pct + '%"></i></span>' +
+      '<span class="elo-val">' + m.score.toFixed(1) + "</span></div>";
+  }).join("");
+}
+
+function logoHTML(name, url){
+  var ch = (name || "?").replace(/[^\w\u4e00-\u9fa5]/g, "").charAt(0) || "?";
+  return '<span class="vlogo"><i class="ph">' + esc(ch) + "</i>" +
+    (url ? '<img src="' + esc(url) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : "") +
+    "</span>";
+}
+
+function vendorBarsHTML(models, limit){
+  var map = {};
+  models.forEach(function(m){
+    var k = m.vendor || "其他";
+    if(!map[k]) map[k] = { k: k, n: 0, logo: "" };
+    map[k].n++;
+    if(!map[k].logo && m.logo) map[k].logo = m.logo;
+  });
+  var top = Object.keys(map).map(function(k){ return map[k]; }).sort(function(a, b){ return b.n - a.n; })
+    .slice(0, limit || 8);
+  var max = Math.max.apply(null, top.map(function(e){ return e.n; }).concat([1]));
+  return top.map(function(e){
+    var pct = Math.round(e.n / max * 100);
+    return '<div class="hbar vbar"><span class="lb" title="' + esc(e.k) + '">' +
+        logoHTML(e.k, e.logo) + '<i class="vn">' + esc(e.k) + "</i></span>" +
+        '<span class="tr"><i style="width:' + pct + '%"></i></span>' +
+        '<span class="vl">' + e.n + "</span></div>";
+  }).join("");
+}
+
+function arenaBodyHTML(data){
+  var models = data.models || [];
+  var vend = countBy(models, function(m){ return m.vendor; });
+  var cn = 0, us = 0;
+  models.forEach(function(m){
+    if(m.country === "中国") cn++;
+    else if(m.country === "美国") us++;
+  });
+  var top = models[0] || { name: "—", score: 0 };
+
+  var stats = '<div class="board-stats">' +
+      '<div class="bs"><b>' + models.length + '</b><span>在榜模型</span></div>' +
+      '<div class="bs"><b>' + vend.length + '</b><span>上榜厂商</span></div>' +
+      '<div class="bs"><b>' + cn + " / " + us + '</b><span>中国 / 美国</span></div>' +
+      '<div class="bs"><b title="' + esc(top.name) + '">' + top.score.toFixed(1) + '</b><span>榜首得分</span></div>' +
+    "</div>";
+
+  var charts = '<div class="arena-charts">' +
+      '<div class="panel"><h3>Elo 得分前 12<small>按得分</small></h3>' + eloChartHTML(models) + "</div>" +
+      '<div class="panel"><h3>厂商分布<small>在榜数量</small></h3>' + vendorBarsHTML(models, 8) + "</div>" +
+    "</div>";
+
+  var rows = models.map(function(m){
+    return '<tr><td class="rk">' + m.rank + "</td>" +
+      '<td class="model"><a href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">' + esc(m.name) + "</a></td>" +
+      '<td class="vendor">' + logoHTML(m.vendor, m.logo) + '<span class="vname">' + esc(m.vendor) + '</span><span class="cty">' + esc(m.country) + "</span></td>" +
+      '<td class="num score">' + m.score.toFixed(1) + "</td>" +
+      '<td class="num ci">±' + m.ci.toFixed(1) + "</td>" +
+      '<td class="num votes">' + m.votes.toLocaleString("en-US") + "</td></tr>";
+  }).join("");
+
+  return '<div class="ar-meta">数据同步时间：' + esc(data.synced || "—") + " · 共 " + models.length +
+      ' 个模型 · 每 4 小时同步一次 · 来源 <a href="https://www.ai-club.cn/rank/arena" target="_blank" rel="noopener noreferrer">ai-club.cn</a></div>' +
+    stats + charts +
+    '<div class="ar-table-head"><h3>完整榜单</h3><span>按 Elo 得分降序</span></div>' +
+    '<div class="ar-table-wrap"><table class="ar-table"><thead><tr>' +
+      "<th>排名</th><th>模型</th><th>厂商 / 国家</th><th>Elo 得分</th><th>置信区间</th><th>投票数</th>" +
+    "</tr></thead><tbody>" + rows + "</tbody></table></div>";
+}
+
+function renderModels(){
+  var hf = State.reports.daily || null;
+  var data = State.arenaData;
+  var chips = ARENA_DIMS.map(function(d){
+    return '<button class="ar-chip' + (d.k === State.arenaDim ? " on" : "") + '" data-dim="' + d.k + '">' + d.label + "</button>";
+  }).join("");
+
+  var head = '<div class="page-head"><h2>模型排行榜</h2><span class="sub">AI 竞技场 · ELO 榜</span></div>' +
+    '<p class="intro">按真实用户盲评对战的 Elo 得分排序，每 4 小时同步一次；得分越高代表人类偏好越强，置信区间越小说明对战样本越充足。' +
+    '点击维度可切换榜单。</p>' +
+    '<div class="arena-bar">' + chips + "</div>";
+
+  var body;
+  if(State.arenaLoading){
+    body = '<div class="arena-empty">正在获取「' + esc(arenaDimLabel(State.arenaDim)) + '」Elo 榜单…</div>';
+  }else if(State.arenaError && !data){
+    body = '<div class="arena-empty">Elo 榜单未能获取：' + esc(State.arenaError) +
+      '<br>请双击同目录的「启动报纸.bat」启动本地服务，再点工具栏「更新本期」重试。</div>';
+  }else if(data){
+    body = arenaBodyHTML(data);
+  }else{
+    body = '<div class="arena-empty">正在准备榜单…</div>';
+  }
+
+  var hfBlock = (hf && hf.trending && hf.trending.length)
+    ? '<div class="arena-hf">' + modelBoardHTML(hf, 10, "开源模型热度榜") + "</div>" : "";
+
+  els.paper.innerHTML = '<div class="models-page">' + head + body + hfBlock + "</div>";
+  updateMasthead();
+}
+
+/* =========================================================
+   11.7 GitHub 中文版
+   ========================================================= */
+var GH_KEY = "ai-paper-ghhub-v1";
+var GH_TTL = 60 * 60000;
+var GH_TOPIC_CN = {
+  "ai":"人工智能", "artificial-intelligence":"人工智能", "machine-learning":"机器学习",
+  "deep-learning":"深度学习", "llm":"大语言模型", "large-language-model":"大语言模型",
+  "llmops":"大模型工程", "agent":"智能体", "agents":"智能体", "ai-agents":"智能体",
+  "multi-agent":"多智能体", "rag":"检索增强", "retrieval-augmented-generation":"检索增强",
+  "mcp":"MCP 协议", "model-context-protocol":"MCP 协议", "chatbot":"对话机器人",
+  "chatgpt":"ChatGPT", "openai":"OpenAI", "gpt":"GPT", "transformer":"Transformer",
+  "multimodal":"多模态", "diffusion":"扩散模型", "stable-diffusion":"扩散模型",
+  "text-to-image":"文生图", "image-generation":"图像生成", "text-to-video":"文生视频",
+  "video-generation":"视频生成", "tts":"语音合成", "text-to-speech":"语音合成",
+  "asr":"语音识别", "speech-recognition":"语音识别", "whisper":"语音识别",
+  "fine-tuning":"模型微调", "lora":"LoRA", "training":"模型训练", "inference":"推理加速",
+  "quantization":"模型量化", "vllm":"推理引擎", "ollama":"本地部署", "local-llm":"本地部署",
+  "prompt-engineering":"提示工程", "embeddings":"向量嵌入", "vector-database":"向量数据库",
+  "computer-vision":"计算机视觉", "nlp":"自然语言处理", "dataset":"数据集",
+  "evaluation":"模型评测", "benchmark":"性能评测", "workflow":"工作流", "automation":"自动化",
+  "copilot":"编程助手", "code-generation":"代码生成", "developer-tools":"开发者工具",
+  "visualization":"数据可视化", "pytorch":"PyTorch", "cuda":"CUDA", "api":"API 服务"
+};
+
+function ghTopicCN(t){
+  return GH_TOPIC_CN[String(t || "").toLowerCase()] || "";
+}
+
+function ghSearch(q, per, sort){
+  var url = "https://api.github.com/search/repositories?q=" + encodeURIComponent(q) +
+            "&sort=" + (sort || "stars") + "&order=desc&per_page=" + (per || 30);
+  var headers = { "Accept": "application/vnd.github+json" };
+  if(State.ghToken) headers["Authorization"] = "Bearer " + State.ghToken;
+  return fetchJSON(url, { headers: headers }).then(function(d){
+    if(!d.items) throw new Error((d.message || "GitHub 返回异常").slice(0, 60));
+    return d.items;
+  });
+}
+
+function ghNormalize(r){
+  return {
+    full: r.full_name,
+    url: r.html_url,
+    desc: String(r.description || "").trim(),
+    zh: "",
+    stars: r.stargazers_count || 0,
+    forks: r.forks_count || 0,
+    lang: r.language || "",
+    topics: (r.topics || []).slice(0, 6),
+    pushed: Date.parse(r.pushed_at) || 0,
+    created: Date.parse(r.created_at) || 0
+  };
+}
+
+function loadGithubHub(){
+  var since = new Date(Date.now() - 30 * DAY).toISOString().slice(0, 10);
+  var active = new Date(Date.now() - 180 * DAY).toISOString().slice(0, 10);
+  var queries = [
+    "topic:ai stars:>1000 pushed:>" + active,
+    "topic:llm stars:>300 pushed:>" + active,
+    "topic:ai created:>" + since
+  ];
+  return Promise.all(queries.map(function(q){
+    return attemptTask(function(){ return ghSearch(q, 30); }, 1).catch(function(){ return []; });
+  })).then(function(groups){
+    var seen = {}, list = [];
+    groups.forEach(function(items){
+      items.forEach(function(r){
+        if(!r || !r.full_name || seen[r.full_name]) return;
+        seen[r.full_name] = 1;
+        list.push(ghNormalize(r));
+      });
+    });
+    if(!list.length) throw new Error("GitHub 项目未获取到数据");
+    var top = list.slice().sort(function(a, b){ return b.stars - a.stars; }).slice(0, 30);
+    return pool(top.map(function(it){
+      return function(){
+        if(!it.desc) return Promise.resolve();
+        return translateOne(it.desc).then(function(zh){ if(zh && zh !== it.desc) it.zh = zh; });
+      };
+    }), 4).then(function(){ return list; });
+  });
+}
+
+function saveGhCache(){
+  try{ safeSet(GH_KEY, JSON.stringify(State.ghCache)); }catch(e){}
+}
+
+function ensureGithubHub(force){
+  if(!force && State.ghCache && State.ghCache.data && Date.now() - State.ghCache.at < GH_TTL){
+    State.ghHub = State.ghCache.data;
+    State.ghError = null;
+    State.ghLoading = false;
+    if(State.period === "github"){ renderGithub(); updateStatusLine(); updateMasthead(); }
+    return;
+  }
+  if(State.ghLoading) return;
+  State.ghLoading = true;
+  State.ghError = null;
+  if(State.period === "github") renderGithub();
+  loadGithubHub().then(function(list){
+    State.ghLoading = false;
+    var hub = { at: Date.now(), items: list };
+    State.ghHub = hub;
+    State.ghCache = { at: Date.now(), data: hub };
+    saveGhCache();
+    if(State.period === "github"){ renderGithub(); updateStatusLine(); updateMasthead(); }
+  }).catch(function(err){
+    State.ghLoading = false;
+    State.ghError = describeError(err) || "获取失败";
+    if(State.period === "github"){ renderGithub(); updateStatusLine(); }
+  });
+}
+
+function ghStarsChartHTML(list){
+  var top = list.slice(0, 12);
+  if(!top.length) return '<p class="hint">暂无数据。</p>';
+  var max = Math.max.apply(null, top.map(function(x){ return x.stars; }).concat([1]));
+  return top.map(function(x, i){
+    var pct = Math.max(5, Math.round(x.stars / max * 100));
+    return '<div class="elo-row"><span class="elo-no">' + (i + 1) + "</span>" +
+      '<span class="elo-name" title="' + esc(x.full + (x.zh ? " · " + x.zh : "")) + '">' + esc(x.full) + "</span>" +
+      '<span class="elo-track"><i style="width:' + pct + '%"></i></span>' +
+      '<span class="elo-val">' + fmtNum(x.stars) + "</span></div>";
+  }).join("");
+}
+
+function githubBodyHTML(hub){
+  var all = hub.items || [];
+  var isNew = State.ghFilter === "new";
+  var list = all.filter(function(it){
+    return isNew ? it.created > Date.now() - 30 * DAY : true;
+  }).sort(function(a, b){ return b.stars - a.stars; });
+
+  if(!list.length){
+    return '<div class="arena-empty">当前筛选下暂无项目。</div>';
+  }
+
+  var starSum = 0, langs = {}, tagCnt = {}, newCnt = 0;
+  all.forEach(function(it){
+    starSum += it.stars;
+    if(it.lang) langs[it.lang] = (langs[it.lang] || 0) + 1;
+    if(it.created > Date.now() - 30 * DAY) newCnt++;
+    it.topics.forEach(function(t){
+      var cn = ghTopicCN(t);
+      if(cn) tagCnt[cn] = (tagCnt[cn] || 0) + 1;
+    });
+  });
+  var langEntries = Object.keys(langs).map(function(k){ return { k: k, n: langs[k] }; })
+    .sort(function(a, b){ return b.n - a.n; });
+  var tagEntries = Object.keys(tagCnt).map(function(k){ return { k: k, n: tagCnt[k] }; })
+    .sort(function(a, b){ return b.n - a.n; });
+
+  var stats = '<div class="board-stats">' +
+      '<div class="bs"><b>' + all.length + '</b><span>收录项目</span></div>' +
+      '<div class="bs"><b>' + newCnt + '</b><span>近 30 天新项目</span></div>' +
+      '<div class="bs"><b>' + fmtNum(starSum) + '</b><span>星标合计</span></div>' +
+      '<div class="bs"><b>' + langEntries.length + '</b><span>覆盖语言</span></div>' +
+    "</div>";
+
+  var charts = '<div class="gh-charts">' +
+      '<div class="panel"><h3>星标前 12<small>按星标</small></h3>' + ghStarsChartHTML(list) + "</div>" +
+      '<div class="panel"><h3>语言分布<small>项目数量</small></h3>' + hbarsHTML(langEntries, all.length, 8) + "</div>" +
+      '<div class="panel"><h3>主题分布<small>已中文化标签</small></h3>' +
+        (tagEntries.length ? hbarsHTML(tagEntries, all.length, 8) : '<p class="hint">暂无主题标签。</p>') + "</div>" +
+    "</div>";
+
+  var rows = list.slice(0, 60).map(function(it, i){
+    var tags = it.topics.map(function(t){ return ghTopicCN(t); })
+      .filter(function(v, idx, arr){ return v && arr.indexOf(v) === idx; })
+      .slice(0, 3).map(function(v){ return '<span class="gh-tag">' + esc(v) + "</span>"; }).join("");
+    return '<tr><td class="rk">' + (i + 1) + "</td>" +
+      '<td class="gh-repo">' +
+        '<a href="' + esc(it.url) + '" target="_blank" rel="noopener noreferrer">' + esc(it.full) + "</a>" +
+        '<span class="gh-desc">' + esc(it.zh || it.desc || "仓库暂无简介") + "</span>" +
+        (tags ? '<span class="gh-tags">' + tags + "</span>" : "") + "</td>" +
+      '<td class="vendor">' + esc(it.lang || "—") + "</td>" +
+      '<td class="num score">' + fmtNum(it.stars) + "</td>" +
+      '<td class="num votes">' + fmtNum(it.forks) + "</td>" +
+      '<td class="num votes">' + fmtDate(it.pushed) + "</td></tr>";
+  }).join("");
+
+  return '<div class="ar-meta">同步时间：' + fmtDate(hub.at) + " " + fmtClock(hub.at) +
+      " · 共 " + all.length + " 个项目 · 每小时同步一次 · 来源 GitHub 搜索 API</div>" +
+    stats + charts +
+    '<div class="ar-table-head"><h3>' + (isNew ? "新晋项目" : "热门项目") + "</h3><span>按星标降序 · 最多展示 60 个</span></div>" +
+    '<div class="ar-table-wrap"><table class="ar-table gh-table"><thead><tr>' +
+      "<th>排名</th><th>项目 / 中文简介</th><th>语言</th><th>星标</th><th>Fork</th><th>最近更新</th>" +
+    "</tr></thead><tbody>" + rows + "</tbody></table></div>";
+}
+
+function renderGithub(){
+  var head = '<div class="models-page">' +
+    '<div class="page-head"><h2>GitHub 中文版</h2><span class="sub">开源项目 · 中文简介</span></div>' +
+    '<p class="intro">自动收集 GitHub 上的人工智能、大模型与智能体开源项目，简介统一译为中文；每小时同步一次。' +
+    "「热门项目」按星标排序，「新晋项目」取近 30 天新建仓库。</p>" +
+    '<div class="arena-bar">' +
+      '<button class="ar-chip' + (State.ghFilter === "hot" ? " on" : "") + '" data-gh="hot">热门项目</button>' +
+      '<button class="ar-chip' + (State.ghFilter === "new" ? " on" : "") + '" data-gh="new">新晋项目</button>' +
+    "</div>";
+
+  var body;
+  if(State.ghLoading){
+    body = '<div class="arena-empty">正在收集 GitHub 开源项目并翻译简介…</div>';
+  }else if(State.ghError && !State.ghHub){
+    body = '<div class="arena-empty">GitHub 项目未能获取：' + esc(State.ghError) +
+      "<br>可点工具栏「更新本期」重试；在「数据源」页填写 GitHub Token 可提高 API 配额。</div>";
+  }else if(State.ghHub){
+    body = githubBodyHTML(State.ghHub);
+  }else{
+    body = '<div class="arena-empty">正在准备 GitHub 榜单…</div>';
+  }
+
+  els.paper.innerHTML = head + body + "</div>";
+  updateMasthead();
+}
+
+function renderSources(){
+  var rep = State.reports[State.period] || State.reports.daily || null;
+  var rows = [];
+  if(rep && rep.statuses){
+    rows = rep.statuses.slice().sort(function(a, b){
+      if(a.ok !== b.ok) return a.ok ? -1 : 1;
+      return b.count - a.count;
+    }).map(function(s){
+      return "<tr><td>" + esc(s.name) + "</td><td>" + esc(s.kind) + "</td>" +
+        "<td class=\"" + (s.ok ? "ok" : "fail") + "\">" + (s.ok ? "正常" : "失败") + "</td>" +
+        "<td>" + (s.ok ? s.count : "—") + "</td>" +
+        "<td>" + (s.ok ? s.ms + " ms" : esc(s.error || "")) + "</td></tr>";
+    }).join("");
+  }
+  var srcList = FEEDS.map(function(f){ return "<li>" + esc(f.name) + " · <code>" + esc(f.url) + "</code></li>"; }).join("") +
+    GN.map(function(g){ return "<li>" + esc(g.name) + " · 查询词「" + esc(g.q) + "」</li>"; }).join("");
+
+  els.paper.innerHTML =
+    '<div class="sources-page">' +
+      '<div class="panel-block"><h2>本期采集明细</h2>' +
+        (rows ? '<table class="src-table"><thead><tr><th>信源</th><th>类型</th><th>状态</th><th>条数</th><th>耗时 / 原因</th></tr></thead><tbody>' +
+        rows + "</tbody></table>" : '<p class="hint">本期尚未采集，点击工具栏「更新本期」。</p>') +
+      "</div>" +
+      '<div class="panel-block"><h2>采集设置</h2>' +
+        '<div class="settings-row"><label>GitHub Token（可选）<input type="text" id="inp-token" placeholder="ghp_xxx，仅保存在本机浏览器" value="' + esc(State.ghToken) + '"></label></div>' +
+        '<div class="settings-row"><label>自动刷新间隔' +
+          '<select id="sel-interval">' +
+            [5,15,30,60].map(function(m){
+              return '<option value="' + m + '"' + (State.interval === m * 60000 ? " selected" : "") + ">" + m + " 分钟</option>";
+            }).join("") +
+          "</select></label>" +
+          '<label class="switch"><input type="checkbox" id="chk-auto2"' + (State.auto ? " checked" : "") + "> 自动刷新开启</label>" +
+          '<button class="btn primary" id="btn-save">保存设置</button>' +
+          '<button class="btn" id="btn-clear">清空缓存</button>' +
+        "</div>" +
+        '<p class="hint">Token 只写入本机 localStorage，用于把 GitHub API 限额从 10 次/分提升到 30 次/分。<b>不需要 Token 也能正常使用。</b></p>' +
+      "</div>" +
+      '<div class="panel-block"><h2>本地采集服务</h2>' +
+        '<p>当前状态：<b>' + (LocalProxy.ok ? "已连接 · http://127.0.0.1:8765" : "未启动") + "</b></p>" +
+        '<p class="hint">浏览器出于安全限制，不能直接读取大多数媒体 RSS 与 arXiv；同目录的 <code>启动报纸.bat</code> 会启动一个只监听本机的 Node 服务（<code>server.js</code>），' +
+        "由它代为抓取，再交给本页面排版。双击 <b>启动报纸.bat</b> 后刷新本页即可获得海内外全部信源；关闭弹出的最小化窗口即停止服务。</p>" +
+      "</div>" +
+      '<div class="panel-block"><h2>工作机制</h2>' +
+        "<ul>" +
+          "<li>打开页面即自动采集并排版本期报纸；数据缓存在本机，<b>15 分钟内重复打开直接秒开</b>，同时后台静默更新。</li>" +
+          "<li>日报取最近 24 小时，周报取最近 7 天，月报取最近 30 天；三个版本各自独立采集、独立缓存。</li>" +
+          "<li>点击「更新本期」强制重新采集；工具栏可搜索、按语言 / 来源筛选；「打印 / 存 PDF」可保存当期报纸。</li>" +
+          "<li>海外 RSS 与 arXiv 通过本地采集服务读取；未启动服务时自动降级为公共 CORS 代理与直连 API（Hacker News / GitHub / Dev.to / OpenAlex）。</li>" +
+        "</ul>" +
+      "</div>" +
+      '<div class="panel-block"><h2>信源清单</h2><ul>' + srcList + "</ul>" +
+        '<p class="hint">API 信源：Hacker News（Algolia）、GitHub Search、Hugging Face、arXiv、Dev.to、OpenAlex。' +
+        "如需增删信源，编辑本文件脚本中的 <code>FEEDS</code> / <code>GN</code> 数组即可。</p>" +
+      "</div>" +
+    "</div>";
+  bindSettings();
+}
+
+function bindSettings(){
+  var btnSave = $("#btn-save");
+  if(btnSave){
+    btnSave.addEventListener("click", function(){
+      var token = ($("#inp-token").value || "").trim();
+      var interval = parseInt($("#sel-interval").value, 10) || 15;
+      var auto = $("#chk-auto2").checked;
+      State.ghToken = token;
+      State.interval = interval * 60000;
+      State.auto = auto;
+      safeSet(TOKEN_KEY, token);
+      safeSet(INTERVAL_KEY, String(interval));
+      els.chkAuto.checked = auto;
+      mem.delete("hf-trending");
+      els.status.textContent = "设置已保存，正在重新采集…";
+      fetchPeriod(State.period, true);
+    });
+  }
+  var btnClear = $("#btn-clear");
+  if(btnClear){
+    btnClear.addEventListener("click", function(){
+      try{ localStorage.removeItem(CACHE_KEY); }catch(e){}
+      State.cache = {};
+      State.reports = {};
+      mem.clear();
+      els.status.textContent = "缓存已清空";
+      fetchPeriod(State.period, false);
+    });
+  }
+}
+
+/* =========================================================
+   13. 页面调度
+   ========================================================= */
+function updateMasthead(){
+  var d = new Date();
+  var wd = "日一二三四五六".charAt(d.getDay());
+  els.mastDate.textContent = d.getFullYear() + " 年 " + (d.getMonth()+1) + " 月 " + d.getDate() + " 日 · 星期" + wd + " · " + fmtClock(d.getTime());
+  els.mastIssue.textContent = pad3(dayOfYear(d));
+  if(State.period === "models"){
+    var a = State.arenaData;
+    els.footMeta.textContent = a
+      ? "模型排行 · " + a.dimName + " · " + a.models.length + " 个模型 · 数据来自 AI Club Arena"
+      : "模型排行 · 数据来自 AI Club Arena（ai-club.cn）";
+    return;
+  }
+  if(State.period === "github"){
+    var g = State.ghHub;
+    els.footMeta.textContent = g
+      ? "GitHub 中文版 · 共 " + g.items.length + " 个项目 · 同步于 " + fmtDate(g.at) + " " + fmtClock(g.at)
+      : "GitHub 中文版 · 数据来自 GitHub 搜索 API";
+    return;
+  }
+  var rep = State.reports[State.period];
+  var p = PERIODS[State.period] || PERIODS.daily;
+  els.footMeta.textContent = rep
+    ? p.label + " · 共 " + rep.articles.length + " 条 · 生成于 " + fmtDate(rep.generatedAt) + " " + fmtClock(rep.generatedAt)
+    : "本期尚未生成 · " + fmtDate(d.getTime()) + " " + fmtClock(d.getTime());
+}
+
+function buildTicker(){
+  var rep = State.reports.daily;
+  if(!rep || !rep.articles.length){ els.ticker.hidden = true; return; }
+  var top = rep.articles.slice().sort(function(a, b){ return heatOf(b, 1) - heatOf(a, 1); }).slice(0, 8);
+  var html = top.map(function(a){
+    return '<a href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer">' + esc(a.title) + "<b>" + esc(a.source) + "</b></a>";
+  }).join("");
+  els.tickerTrack.innerHTML = html + html;
+  els.ticker.hidden = false;
+}
+
+function updateSourceSelect(rep){
+  var counts = {};
+  (rep.articles || []).forEach(function(a){ counts[a.source] = (counts[a.source] || 0) + 1; });
+  var names = Object.keys(counts).sort(function(a, b){ return counts[b] - counts[a]; });
+  if(Filter.src !== "all" && names.indexOf(Filter.src) === -1) Filter.src = "all";
+  els.src.innerHTML = '<option value="all">全部来源</option>' + names.map(function(n){
+    return '<option value="' + esc(n) + '"' + (Filter.src === n ? " selected" : "") + ">" + esc(n) + " (" + counts[n] + ")</option>";
+  }).join("");
+}
+
+function renderPeriod(period){
+  var rep = State.reports[period];
+  if(!rep){ renderLoading(period); return; }
+  updateSourceSelect(rep);
+  if(period === "daily") els.paper.innerHTML = renderDaily(rep);
+  else if(period === "weekly") els.paper.innerHTML = renderWeekly(rep);
+  else if(period === "monthly") els.paper.innerHTML = renderMonthly(rep);
+  else renderSources();
+  buildTicker();
+  updateMasthead();
+}
+
+function updateStatusLine(){
+  if(State.period === "models"){
+    var a = State.arenaData;
+    els.status.classList.remove("busy");
+    if(State.arenaLoading) els.status.textContent = "模型排行 · 正在获取 Elo 榜单…";
+    else if(a) els.status.textContent = "Elo 榜 · " + a.dimName + " · 同步于 " + (a.synced || "—");
+    else if(State.arenaError) els.status.textContent = "模型排行 · 获取失败";
+    else els.status.textContent = "模型排行 · 等待获取";
+    return;
+  }
+  if(State.period === "github"){
+    els.status.classList.remove("busy");
+    if(State.ghLoading) els.status.textContent = "GitHub 中文 · 正在收集开源项目…";
+    else if(State.ghHub) els.status.textContent = "GitHub 中文 · " + State.ghHub.items.length + " 个项目 · 同步于 " + fmtClock(State.ghHub.at);
+    else if(State.ghError) els.status.textContent = "GitHub 中文 · 获取失败";
+    else els.status.textContent = "GitHub 中文 · 等待获取";
+    return;
+  }
+  var rep = State.reports[State.period];
+  if(State.busy){ els.status.textContent = "正在采集并排版…"; els.status.classList.add("busy"); return; }
+  els.status.classList.remove("busy");
+  if(!rep){ els.status.textContent = "尚未采集"; return; }
+  var total = rep.articles.length;
+  els.status.textContent = "更新于 " + fmtClock(rep.generatedAt) + " · 共 " + total + " 条";
+}
+
+function setBusy(b){
+  State.busy = b;
+  els.btnRefresh.disabled = b;
+  els.btnRefresh.textContent = b ? "采集中…" : "更新本期";
+  updateStatusLine();
+}
+
+function fetchPeriod(period, silent, done){
+  if(State.loading[period]) return;
+  State.loading[period] = true;
+  var isCurrent = State.period === period;
+  var hasData = !!State.reports[period];
+
+  if(isCurrent){
+    if(!hasData || !silent) renderLoading(period);
+    setBusy(true);
+  }
+
+  collect(period, function(statuses){
+    if(isCurrent && !hasData) updateLoadingChips(statuses);
+  }).then(function(rep){
+    State.reports[period] = rep;
+    State.cache[period] = { at: Date.now(), report: rep };
+    saveCache();
+    if(State.period === period) renderPeriod(period);
+    else if(State.period === "models" && period === "daily") renderModels();
+    if(period === "daily"){
+      // 后台预取周报 / 月报，切换标签即可秒开
+      setTimeout(function(){ ensurePeriod("weekly"); }, 4000);
+      setTimeout(function(){ ensurePeriod("monthly"); }, 11000);
+    }
+    if(done) done(null, rep);
+  }).catch(function(err){
+    if(State.period === period && !State.reports[period]) renderError(err, period);
+    if(done) done(err);
+  }).then(function(){
+    State.loading[period] = false;
+    if(State.period === period){ setBusy(false); }
+    updateStatusLine();
+  });
+}
+
+function ensurePeriod(period, force){
+  if(State.loading[period]) return;
+  var cached = State.cache[period];
+  if(cached && cached.report){
+    State.reports[period] = State.reports[period] || cached.report;
+    if(State.period === period && !force) renderPeriod(period);
+    if(!force && Date.now() - cached.at < TTL) return;
+  }
+  if(force || !cached){
+    fetchPeriod(period, !!cached);
+  }else{
+    // 缓存过期：先展示旧报，再静默更新
+    if(State.period === period) renderPeriod(period);
+    fetchPeriod(period, true);
+  }
+}
+
+function saveCache(){
+  var slim = {};
+  Object.keys(State.cache).forEach(function(k){
+    var c = State.cache[k];
+    if(c && c.report){
+      slim[k] = { at: c.at, report: c.report };
+    }
+  });
+  try{
+    safeSet(CACHE_KEY, JSON.stringify(slim));
+  }catch(e){
+    // 超出配额时只保留日报
+    try{ safeSet(CACHE_KEY, JSON.stringify({ daily: slim.daily })); }catch(e2){}
+  }
+}
+
+function switchTab(period){
+  if(State.period === period) return;
+  Filter.q = "";
+  Filter.lang = "all";
+  Filter.src = "all";
+  els.search.value = "";
+  els.lang.value = "all";
+  els.src.value = "all";
+  State.period = period;
+  $$(".tab").forEach(function(t){
+    t.classList.toggle("active", t.getAttribute("data-period") === period);
+  });
+  if(period === "sources"){ renderSources(); updateStatusLine(); return; }
+  if(period === "models"){ ensureArena(State.arenaDim); updateStatusLine(); return; }
+  if(period === "github"){ ensureGithubHub(false); updateStatusLine(); return; }
+  if(!State.reports[period]) renderLoading(period);
+  else renderPeriod(period);
+  updateStatusLine();
+  ensurePeriod(period);
+}
+
+/* =========================================================
+   14. 事件绑定
+   ========================================================= */
+els.tabs.addEventListener("click", function(e){
+  var tab = e.target.closest(".tab");
+  if(!tab) return;
+  switchTab(tab.getAttribute("data-period"));
+});
+
+els.btnRefresh.addEventListener("click", function(){
+  if(State.period === "sources"){ switchTab("daily"); return; }
+  if(State.period === "models"){
+    ensureArena(State.arenaDim, true);
+    return;
+  }
+  if(State.period === "github"){
+    LocalProxy.ready = null;
+    detectLocalProxy(true).then(function(){ ensureGithubHub(true); });
+    return;
+  }
+  LocalProxy.ready = null;
+  detectLocalProxy(true).then(function(){ fetchPeriod(State.period, true); });
+});
+
+$("#proxy-flag").addEventListener("click", function(){
+  LocalProxy.ready = null;
+  detectLocalProxy(true).then(function(){
+    els.status.textContent = LocalProxy.ok ? "本地服务已连接，点击「更新本期」重新采集" : "未发现本地服务，请双击「启动报纸.bat」";
+  });
+});
+
+els.btnPrint.addEventListener("click", function(){ window.print(); });
+
+els.chkAuto.checked = State.auto;
+els.chkAuto.addEventListener("change", function(){
+  State.auto = els.chkAuto.checked;
+});
+
+var searchTimer = null;
+els.search.addEventListener("input", function(){
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function(){
+    Filter.q = els.search.value;
+    if(["daily","weekly","monthly"].indexOf(State.period) !== -1) renderPeriod(State.period);
+  }, 220);
+});
+els.lang.addEventListener("change", function(){
+  Filter.lang = els.lang.value;
+  if(["daily","weekly","monthly"].indexOf(State.period) !== -1) renderPeriod(State.period);
+});
+els.src.addEventListener("change", function(){
+  Filter.src = els.src.value;
+  if(["daily","weekly","monthly"].indexOf(State.period) !== -1) renderPeriod(State.period);
+});
+
+els.paper.addEventListener("click", function(e){
+  var dim = e.target.closest("[data-dim]");
+  if(dim){
+    ensureArena(dim.getAttribute("data-dim"), false);
+    return;
+  }
+  var ghf = e.target.closest("[data-gh]");
+  if(ghf){
+    State.ghFilter = ghf.getAttribute("data-gh");
+    renderGithub();
+    return;
+  }
+  var retry = e.target.closest("[data-retry]");
+  if(retry){
+    if(State.period === "models"){ ensureArena(State.arenaDim, true); return; }
+    if(State.period === "github"){ ensureGithubHub(true); return; }
+    fetchPeriod(State.period === "sources" ? "daily" : State.period, false);
+  }
+});
+
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState === "visible"){
+    if(State.period === "models"){
+      var d = State.cache.daily;
+      if(State.auto && (!d || Date.now() - d.at > State.interval)){
+        LocalProxy.ready = null;
+        fetchPeriod("daily", true);
+      }
+      return;
+    }
+    if(State.period === "github"){
+      if(State.auto && (!State.ghCache || Date.now() - State.ghCache.at > GH_TTL)){
+        LocalProxy.ready = null;
+        ensureGithubHub(true);
+      }
+      return;
+    }
+    var cached = State.cache[State.period];
+    if(State.auto && (!cached || Date.now() - cached.at > State.interval)){
+      LocalProxy.ready = null;
+      if(State.period !== "sources") fetchPeriod(State.period, true);
+    }
+  }
+});
+
+setInterval(function(){
+  if(!State.auto || document.hidden) return;
+  if(State.period === "sources" || State.period === "models" || State.period === "github") return;
+  var cached = State.cache[State.period];
+  if(!cached || Date.now() - cached.at > State.interval){
+    LocalProxy.ready = null;
+    fetchPeriod(State.period, true);
+  }
+}, 60000);
+
+/* =========================================================
+   15. 启动
+   ========================================================= */
+(function init(){
+  State.cache = safeJSON(CACHE_KEY, {}) || {};
+  State.arenaCache = safeJSON(ARENA_KEY, {}) || {};
+  State.ghCache = safeJSON(GH_KEY, {}) || {};
+  var cachedDaily = State.cache.daily && State.cache.daily.report;
+  if(cachedDaily){
+    State.reports.daily = cachedDaily;
+    renderDaily(cachedDaily);
+    updateSourceSelect(cachedDaily);
+    buildTicker();
+  }else{
+    renderLoading("daily");
+  }
+  updateMasthead();
+  updateStatusLine();
+  detectLocalProxy();
+
+  // 打开即更新：有缓存先读缓存，同时后台刷新
+  ensurePeriod("daily");
+})();
+
+})();
+</script>
+</body>
+</html>
